@@ -7,32 +7,34 @@ import java.util.Random;
 public class Database {
     // JDBC driver name and database URL
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost/NOTES?useSSL=false";
+    static final String DB_URL = "jdbc:mysql://localhost/NOTES?useSSL=false";
 
     //  Database credentials
-    private static final String USER = "REDACTED";
-    private static final String PASS = "REDACTED";
+    static final String USER = "REDACTED";
+    static final String PASS = "REDACTED";
     private static final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
 
     public static List<Note> getAllNotes() throws Exception {
-        return getNotes("SELECT * FROM Notes");
+        Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
+        return getNotes(conn.prepareStatement("SELECT * FROM Notes;" ));
     }
 
     public static List<Note> getActiveNotes() throws Exception {
         /**
          * Returns all notes that are not deleted
          */
-        return getNotes("select * from notes where archived = 0 order by id desc;");
+        Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
+        return getNotes(conn.prepareStatement("select * from notes where archived = 0 order by id desc;" ));
     }
 
 
-    public static List<Note> getNotes(String sql) throws Exception {
+    public static List<Note> getNotes(PreparedStatement sql) throws Exception {
         List<Note> notes = new ArrayList<Note>();
         Class.forName("com.mysql.jdbc.Driver");
 //        System.out.println("Connecting to database...");
         Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
 //        System.out.println("Creating statement...");
-        ResultSet rs = conn.createStatement().executeQuery(sql);
+        ResultSet rs = sql.executeQuery();
         while(rs.next()){
             String title = rs.getString("title");
             int id = Integer.parseInt(rs.getString("id"));
@@ -46,7 +48,7 @@ public class Database {
     }
 
 
-        public static String getRandom(String[] array) {
+    public static String getRandom(String[] array) {
         int rnd = new Random().nextInt(array.length);
         return array[rnd];
     }
@@ -55,19 +57,21 @@ public class Database {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
-            String sql = "UPDATE notes SET color='" + color + "' WHERE id = " + n.getId() + ";";
-            conn.createStatement().executeUpdate(sql);
+            PreparedStatement sql =  conn.prepareStatement(
+                    "UPDATE notes SET color = ? WHERE id = ? ;" );
+            sql.setString(1, color);
+            sql.setInt(2, n.getId());
+            sql.executeUpdate();
             conn.close();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public static void executeQuery(String sql) {
+    public static void executeQuery(Connection conn, PreparedStatement sql) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
-            conn.createStatement().executeUpdate(sql);
+            sql.executeUpdate();
             conn.close();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -101,8 +105,8 @@ public class Database {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            String sql = "select max(id) from notes;";
-            ResultSet rs = conn.createStatement().executeQuery(sql);
+            PreparedStatement sql = conn.prepareStatement("select max(id) from notes;");
+            ResultSet rs = sql.executeQuery();
             while (rs.next()) {
                 max = rs.getInt("max(id)");
             }

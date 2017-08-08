@@ -5,9 +5,15 @@
 
 //IN ORDER TO RUN:
 // START MYSQL (USE MYSQL CLI CLIENT)
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import io.javalin.Javalin;
+
+import javax.xml.crypto.Data;
 
 /**
  */
@@ -23,19 +29,28 @@ public class Main {
         app.post("/make-note", ctx -> {
             Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), (Database.getMaxID()+1), ctx.formParam("color"));
             if (n.getTitle().equals("")) {
-                n.setTitle("NULL");;
+                n.setTitle(null);;
             } else {
-                n.setTitle("'" + n.getTitle() + "'");
+//                n.setTitle("'" + n.getTitle() + "'");
             }
 
             if (n.getColor().equals("")) {
-                n.setColor("NULL");
+                n.setColor(null);
             } else {
-                n.setColor("'" + n.getColor() + "'");
+//                n.setColor("'" + n.getColor() + "'");
             }
-            String sql = "INSERT into notes VALUES (" + n.getId() + ", " + n.getTitle() + ", '" + n.getBody() + "', " + n.getColor() + ", " + n.getArchived() + ");";
-            System.out.println(sql);
-            Database.executeQuery(sql);
+
+            Connection conn = DriverManager.getConnection(Database.DB_URL,Database.USER,Database.PASS);
+            PreparedStatement sql =  conn.prepareStatement(
+                    "INSERT into notes VALUES ( ? , ? , ? , ? , ? )" );
+            sql.setInt(1, n.getId());
+            sql.setString(2, n.getTitle());
+            sql.setString(3, n.getBody());
+            sql.setString(4, n.getColor());
+            sql.setInt(5, n.getArchived());
+            Database.executeQuery(conn, sql);
+
+
             ctx.redirect("/viewall"); // redirect
             System.out.println("created " + n.getId() + "...");
         });
@@ -57,8 +72,19 @@ public class Main {
 
         app.get("/delete/:id", ctx -> {
             System.out.println(("deleting " + ctx.param("id")) + "...");
-            Database.executeQuery("update notes set archived = 1 where id =" + ctx.param("id") + ";"); // delete query
-            ctx.redirect("/viewall"); // redirect
+//            Database.executeQuery("update notes set archived = 1 where id =" + ctx.param("id") + ";"); // delete query
+            int id;
+            try {
+                id = Integer.parseInt(ctx.param("id"));
+                ctx.redirect("/viewall"); // redirect
+                Connection conn = DriverManager.getConnection(Database.DB_URL,Database.USER,Database.PASS);
+                PreparedStatement sql =  conn.prepareStatement(
+                        "update notes set archived = 1 where id = ? ;" );
+                sql.setInt(1, id);
+                Database.executeQuery(conn, sql);
+            } catch (NumberFormatException nfe) {
+                ctx.html("invalid request. Specify a note id to delete.<br><a href=\"/viewall\">return to home</a>");
+            }
         });
     }
 
