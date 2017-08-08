@@ -6,21 +6,32 @@ import java.util.Random;
 
 public class Database {
     // JDBC driver name and database URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/NOTES?useSSL=false";
+    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DB_URL = "jdbc:mysql://localhost/NOTES?useSSL=false";
 
     //  Database credentials
-    static final String USER = "REDACTED";
-    static final String PASS = "REDACTED";
-    static final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
+    private static final String USER = "REDACTED";
+    private static final String PASS = "REDACTED";
+    private static final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
 
-    public static List<Note> getNotes() throws Exception {
+    public static List<Note> getAllNotes() throws Exception {
+        return getNotes("SELECT * FROM Notes");
+    }
+
+    public static List<Note> getActiveNotes() throws Exception {
+        /**
+         * Returns all notes that are not deleted
+         */
+        return getNotes("SELECT * FROM Notes where archived = 0;");
+    }
+
+
+    public static List<Note> getNotes(String sql) throws Exception {
         List<Note> notes = new ArrayList<Note>();
         Class.forName("com.mysql.jdbc.Driver");
 //        System.out.println("Connecting to database...");
         Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
 //        System.out.println("Creating statement...");
-        String sql = "SELECT * FROM Notes";
         ResultSet rs = conn.createStatement().executeQuery(sql);
         while(rs.next()){
             String title = rs.getString("title");
@@ -34,7 +45,8 @@ public class Database {
         return notes;
     }
 
-    public static String getRandom(String[] array) {
+
+        public static String getRandom(String[] array) {
         int rnd = new Random().nextInt(array.length);
         return array[rnd];
     }
@@ -101,6 +113,4 @@ public class Database {
         }
         return max;
     }
-
-    public static void main(String[] args) { }
 }

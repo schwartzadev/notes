@@ -5,7 +5,6 @@
 
 //IN ORDER TO RUN:
 // START MYSQL (USE MYSQL CLI CLIENT)
-import java.util.ArrayList;
 import java.util.List;
 
 import io.javalin.Javalin;
@@ -34,7 +33,8 @@ public class Main {
             } else {
                 n.setColor("'" + n.getColor() + "'");
             }
-            String sql = "INSERT into notes VALUES (" + n.getId() + ", " + n.getTitle() + ", '" + n.getBody() + "', " + n.getColor() + ");";
+            String sql = "INSERT into notes VALUES (" + n.getId() + ", " + n.getTitle() + ", '" + n.getBody() + "', " + n.getColor() + ", " + n.getArchived() + ");";
+            System.out.println(sql);
             Database.executeQuery(sql);
             ctx.redirect("/viewall"); // redirect
             System.out.println("created " + n.getId() + "...");
@@ -43,7 +43,7 @@ public class Main {
         app.get("/viewall", ctx -> {
             System.out.println("checking notes...");
             StringBuilder sb = new StringBuilder();
-            List<Note> dbNotes = Database.getNotes();
+            List<Note> dbNotes = Database.getActiveNotes();
             sb.append("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"></head>");
             sb.append("<h1 class=\"pagetitle\">all notes  </h1>");
             sb.append("<a href=\"index.html\">Add a new note</a>");
@@ -57,7 +57,7 @@ public class Main {
 
         app.get("/delete/:id", ctx -> {
             System.out.println(("deleting " + ctx.param("id")) + "...");
-            Database.executeQuery("delete from notes where id=" + ctx.param("id") + ";"); // delete query
+            Database.executeQuery("update notes set archived = 1 where id =" + ctx.param("id") + ";"); // delete query
             ctx.redirect("/viewall"); // redirect
         });
     }
