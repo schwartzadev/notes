@@ -64,7 +64,7 @@ public class Database {
         }
         sb.append("<p class=\"content notecontent\">").append(body).append("</p>");
         sb.append("<div class=\"toolbar\">\n" +
-                "<img class=\"trash\" src=\"./img/trash.svg\">\n" + // TODO make this a link to a method that removes note from database
+                "<a href=\"/delete/" + id + "\">" + "<img class=\"trash\" src=\"./img/trash.svg\"></a>\n" + // TODO make this a link to a method that removes note from database
                 "</div");
         sb.append("</div>");
         sb.append("</div>");

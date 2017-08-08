@@ -101,6 +101,12 @@ public class Main {
             sb.append("</div>"); // end container
             ctx.html(sb.toString());
         });
+
+        app.get("/delete/:id", ctx -> {
+            System.out.println(("Hello: " + ctx.param("id")));
+            // delete query here
+            ctx.redirect("/viewall"); // redirect
+        });
     }
 
 }
