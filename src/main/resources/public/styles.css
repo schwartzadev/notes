@@ -1,0 +1,36 @@
+.container {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.note {
+	width: 300px;
+	/*margin-right: 2vw;*/
+	/*border: red solid 4px;*/
+	border-radius: 5px;
+	margin: 2em;
+	background-color: green;
+	position: relative;
+	padding-bottom: 3em;
+}
+
+.note > * {
+	padding-left: 20px;
+}
+
+.note p.id {
+	color: rgba(255,255,255,0.3);
+	margin: 0 .8em .3em 0;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+.toolbar {
+	position: absolute;
+	bottom: .5em;
+}
+
+.toolbar img.trash {
+	width: 25px;
+}
