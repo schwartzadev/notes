@@ -13,10 +13,6 @@ import java.util.List;
 
 import io.javalin.Javalin;
 
-import javax.xml.crypto.Data;
-
-/**
- */
 
 
 public class Main {
@@ -30,14 +26,9 @@ public class Main {
             Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), (Database.getMaxID()+1), ctx.formParam("color"));
             if (n.getTitle().equals("")) {
                 n.setTitle(null);;
-            } else {
-//                n.setTitle("'" + n.getTitle() + "'");
             }
-
             if (n.getColor().equals("")) {
                 n.setColor(null);
-            } else {
-//                n.setColor("'" + n.getColor() + "'");
             }
 
             Connection conn = DriverManager.getConnection(Database.DB_URL,Database.USER,Database.PASS);
@@ -72,7 +63,6 @@ public class Main {
 
         app.get("/delete/:id", ctx -> {
             System.out.println(("deleting " + ctx.param("id")) + "...");
-//            Database.executeQuery("update notes set archived = 1 where id =" + ctx.param("id") + ";"); // delete query
             int id;
             try {
                 id = Integer.parseInt(ctx.param("id"));

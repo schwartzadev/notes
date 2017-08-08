@@ -1,15 +1,12 @@
-//STEP 1. Import required packages
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Database {
-    // JDBC driver name and database URL
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/NOTES?useSSL=false";
+    static final String DB_URL = "jdbc:mysql://localhost/NOTES?useSSL=true";
 
-    //  Database credentials
     static final String USER = Config.MySQLUser;
     static final String PASS = Config.MySQLPass;
     private static final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
@@ -31,9 +28,7 @@ public class Database {
     public static List<Note> getNotes(PreparedStatement sql) throws Exception {
         List<Note> notes = new ArrayList<Note>();
         Class.forName("com.mysql.jdbc.Driver");
-//        System.out.println("Connecting to database...");
         Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
-//        System.out.println("Creating statement...");
         ResultSet rs = sql.executeQuery();
         while(rs.next()){
             String title = rs.getString("title");
