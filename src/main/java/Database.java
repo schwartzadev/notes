@@ -10,8 +10,8 @@ public class Database {
     static final String DB_URL = "jdbc:mysql://localhost/NOTES?useSSL=false";
 
     //  Database credentials
-    static final String USER = "REDACTED";
-    static final String PASS = "REDACTED";
+    static final String USER = Config.MySQLUser;
+    static final String PASS = Config.MySQLPass;
     private static final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
 
     public static List<Note> getAllNotes() throws Exception {
