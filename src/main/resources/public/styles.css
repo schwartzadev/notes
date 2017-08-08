@@ -34,3 +34,40 @@
 .toolbar img.trash {
 	width: 25px;
 }
+
+.content {
+    padding-right: 20px;
+    font-size: 1.3em;
+}
+
+p.larger {
+    font-size: 2em;
+}
+
+.colorButtons input[type="button"] {
+    border: none;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 5px;
+}
+
+.colorText {
+    display: inline;
+}
+
+textarea {
+  width: 200px;
+  font-family: serif;
+  height: 100px;
+}
+
+label[for=textarea],
+textarea {
+  display: inline-block;
+  vertical-align: middle;
+
+}
+
+.pagetitle {
+    display: inline;
+}

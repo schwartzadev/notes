@@ -12,7 +12,7 @@ public class Database {
     //  Database credentials
     static final String USER = "REDACTED";
     static final String PASS = "REDACTED";
-    static final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9F97F4", "A4DEF9"};
+    static final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
 
     public static List<Note> getNotes() throws Exception {
         List<Note> notes = new ArrayList<Note>();
@@ -72,7 +72,11 @@ public class Database {
         if (note.getTitle() != null) {
             sb.append("<h2 class=\"title\">").append(note.getTitle()).append("</h2>");
         }
-        sb.append("<p class=\"content notecontent\">").append(note.getBody()).append("</p>");
+        if (note.getTitle() == null) {
+            sb.append("<p class=\"content larger\">").append(note.getBody()).append("</p>");
+        } else {
+            sb.append("<p class=\"content\">").append(note.getBody()).append("</p>");
+        }
         sb.append("<div class=\"toolbar\">\n" + "<a href=\"/delete/").append(note.getId()).append("\">").append("<img class=\"trash\" src=\"./img/trash.svg\"></a>\n").append("</div");
         sb.append("</div>");
         sb.append("</div>");

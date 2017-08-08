@@ -22,33 +22,30 @@ public class Main {
                 .start();
 
         app.post("/make-note", ctx -> {
-            String title = ctx.formParam("title");
-            String body = ctx.formParam("body");
-            String color = ctx.formParam("color");
-            if (title.equals("")) {
-                title = "NULL";
+            Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), (Database.getMaxID()+1), ctx.formParam("color"));
+            if (n.getTitle().equals("")) {
+                n.setTitle("NULL");;
             } else {
-                title = "'" + title + "'";
+                n.setTitle("'" + n.getTitle() + "'");
             }
 
-            if (color.equals("")) {
-                color = "NULL";
+            if (n.getColor().equals("")) {
+                n.setColor("NULL");
             } else {
-                color = "'" + color + "'";
+                n.setColor("'" + n.getColor() + "'");
             }
-
-            String sql = "INSERT into notes VALUES (" + (Database.getMaxID()+1) + ", " + title + ", '" + body + "', " + color + ");";
+            String sql = "INSERT into notes VALUES (" + n.getId() + ", " + n.getTitle() + ", '" + n.getBody() + "', " + n.getColor() + ");";
             Database.executeQuery(sql);
             ctx.redirect("/viewall"); // redirect
+            System.out.println("created " + n.getId() + "...");
         });
 
         app.get("/viewall", ctx -> {
             System.out.println("checking notes...");
             StringBuilder sb = new StringBuilder();
-            List<Note> dbNotes = new ArrayList<Note>();
-            dbNotes = Database.getNotes();
+            List<Note> dbNotes = Database.getNotes();
             sb.append("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"></head>");
-            sb.append("<h1>all notes</h1>");
+            sb.append("<h1 class=\"pagetitle\">all notes  </h1>");
             sb.append("<a href=\"index.html\">Add a new note</a>");
             sb.append("<div class=\"container\">");
             for (Note n : dbNotes) {
