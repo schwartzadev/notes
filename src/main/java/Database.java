@@ -22,7 +22,7 @@ public class Database {
         /**
          * Returns all notes that are not deleted
          */
-        return getNotes("SELECT * FROM Notes where archived = 0;");
+        return getNotes("select * from notes where archived = 0 order by id desc;");
     }
 
 
