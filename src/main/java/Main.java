@@ -10,12 +10,7 @@ import java.util.List;
 
 import io.javalin.Javalin;
 
-import javax.xml.crypto.Data;
-
-/** TODO add trash to notes - removes from database, reloads
- *  TODO fix css - toolbar spacing
- *  TODO map sql rows to objects with jooq
- *  TODO ADD GIT **** priority
+/**
  */
 
 
