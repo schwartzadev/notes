@@ -5,9 +5,12 @@
 
 //IN ORDER TO RUN:
 // START MYSQL (USE MYSQL CLI CLIENT)
-import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.javalin.Javalin;
+
+import javax.xml.crypto.Data;
 
 /** TODO add trash to notes - removes from database, reloads
  *  TODO fix css - toolbar spacing
@@ -17,44 +20,6 @@ import io.javalin.Javalin;
 
 
 public class Main {
-
-    public static class Note {
-
-        public String toHtml() {
-            StringBuilder sb = null;
-
-            return sb.toString();
-        }
-
-        String title;
-        String body;
-        String color;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getBody() {
-            return body;
-        }
-
-        public String getColor() {
-            return color;
-        }
-
-        public Note(String title, String body, String color) {
-            this.title = title;
-            this.body = body;
-            this.color = color;
-            //            attrs: color, id, body, title
-        }
-
-        @Override
-        public String toString() {
-            return this.title + ": " + this.body + "\t\t" + this.color;
-        }
-    }
-
     public static void main(String[] args) {
         Javalin app = Javalin.create()
                 .port(7777)
@@ -78,33 +43,29 @@ public class Main {
             }
 
             String sql = "INSERT into notes VALUES (" + (Database.getMaxID()+1) + ", " + title + ", '" + body + "', " + color + ");";
-            System.out.println(sql);
-            Database.addNoteByQuery(sql);
+            Database.executeQuery(sql);
             ctx.redirect("/viewall"); // redirect
         });
 
         app.get("/viewall", ctx -> {
             System.out.println("checking notes...");
             StringBuilder sb = new StringBuilder();
-            ResultSet rs = Database.getNotes();
+            List<Note> dbNotes = new ArrayList<Note>();
+            dbNotes = Database.getNotes();
             sb.append("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"></head>");
             sb.append("<h1>all notes</h1>");
             sb.append("<a href=\"index.html\">Add a new note</a>");
             sb.append("<div class=\"container\">");
-            while(rs.next()){
-                String title = rs.getString("title");
-                int id = Integer.parseInt(rs.getString("id"));
-                String body = rs.getString("body");
-                String color = rs.getString("color");
-                sb.append(Database.generateNoteHtml(title, id, body, color));
+            for (Note n : dbNotes) {
+                sb.append(Database.generateNoteHtml(n));
             }
             sb.append("</div>"); // end container
             ctx.html(sb.toString());
         });
 
         app.get("/delete/:id", ctx -> {
-            System.out.println(("Hello: " + ctx.param("id")));
-            // delete query here
+            System.out.println(("deleting " + ctx.param("id")) + "...");
+            Database.executeQuery("delete from notes where id=" + ctx.param("id") + ";"); // delete query
             ctx.redirect("/viewall"); // redirect
         });
     }
