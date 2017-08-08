@@ -6,12 +6,23 @@ public class Note {
     private String body;
     private int id;
     private String color;
+    private int archived; // 0 is false, non-zero is true (will use 1)
 
     public Note(String title, String body, int id, String color) {
         this.title = title;
         this.body = body;
         this.id = id;
         this.color = color;
+        this.archived = 0; // not archived
+    }
+
+    public int getArchived() {
+        return archived;
+    }
+
+
+    public void archive() {
+        this.archived = 1;
     }
 
     public int getId() {
