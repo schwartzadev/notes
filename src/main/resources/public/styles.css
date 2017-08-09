@@ -5,6 +5,7 @@
 
 .note {
 	width: 300px;
+	min-height: 200px;
 	/*margin-right: 2vw;*/
 	/*border: red solid 4px;*/
 	border-radius: 5px;
@@ -59,7 +60,7 @@ p.larger {
 textarea {
   width: 200px;
   font-family: serif;
-  height: 100px;
+  height: 80px;
 }
 
 label[for=textarea],
@@ -71,4 +72,20 @@ textarea {
 
 .pagetitle {
     display: inline;
+}
+
+#note-factory > * {
+    display: inline;
+    margin-right: 2em;
+}
+
+.form-factory-container {
+    margin: 0 auto;
+    width: 1300px;
+}
+
+.submit-container {
+    margin: 0 auto;
+    text-align: left;
+    width: 800px;
 }

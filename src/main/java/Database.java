@@ -18,7 +18,7 @@ public class Database {
 
     public static List<Note> getActiveNotes() throws Exception {
         /**
-         * Returns all notes that are not deleted
+         * Returns all notes that are not archived
          */
         Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
         return getNotes(conn.prepareStatement("select * from notes where archived = 0 order by id desc;" ));

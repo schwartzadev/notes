@@ -1,24 +1,27 @@
 <head><link rel="stylesheet" type="text/css" href="styles.css"></head>
-<h1 class="pagetitle">new note  </h1> <a href="/viewall">See all Notes</a>
-<form method="post" action="/make-note">
-    Title: <input name="title" type="text">
-    <br>
-    <br>
-    <label for="textarea">Body *</label> <textarea id="textarea" name="body" required></textarea>
-    <br>
-    <br>
-    <div class="colorButtons">
-        <p class="colorText">Choose color:</p>
-        <!-- color selector-->
-        <input type="button" value=" " style="background-color: #70d5d8;" onClick="document.getElementById('colorchoice').value='70d5d8'">
-        <input type="button" value=" " style="background-color: #8dffcd;" onClick="document.getElementById('colorchoice').value='8dffcd'">
-        <input type="button" value=" " style="background-color: #ebbab9;" onClick="document.getElementById('colorchoice').value='ebbab9'">
-        <input type="button" value=" " style="background-color: #eda6dd;" onClick="document.getElementById('colorchoice').value='eda6dd'">
-        <input type="button" value=" " style="background-color: #c09bd8;" onClick="document.getElementById('colorchoice').value='c09bd8'">
-        <input type="button" value=" " style="background-color: #9f97f4;" onClick="document.getElementById('colorchoice').value='9f97f4'">
-        <input type="button" value=" " style="background-color: #a4def9;" onClick="document.getElementById('colorchoice').value='a4def9'">
-    </div>
-    <!--<select name="time">-->
+<!--<h1 class="pagetitle">new note</h1>-->
+<div class="form-factory-container">
+    <form id="note-factory" method="post" action="/make-note">
+        <div>
+            <label for="title">Title:</label>
+            <input name="title" id="title" type="text">
+        </div>
+        <div>
+            <label for="textarea">Body *</label>
+            <textarea id="textarea" name="body" required></textarea>
+        </div>
+        <div class="colorButtons">
+            <p class="colorText">Choose color:</p>
+            <!-- color selector-->
+            <input type="button" value=" " style="background-color: #70d5d8;" onClick="document.getElementById('colorchoice').value='70d5d8'">
+            <input type="button" value=" " style="background-color: #8dffcd;" onClick="document.getElementById('colorchoice').value='8dffcd'">
+            <input type="button" value=" " style="background-color: #ebbab9;" onClick="document.getElementById('colorchoice').value='ebbab9'">
+            <input type="button" value=" " style="background-color: #eda6dd;" onClick="document.getElementById('colorchoice').value='eda6dd'">
+            <input type="button" value=" " style="background-color: #c09bd8;" onClick="document.getElementById('colorchoice').value='c09bd8'">
+            <input type="button" value=" " style="background-color: #9f97f4;" onClick="document.getElementById('colorchoice').value='9f97f4'">
+            <input type="button" value=" " style="background-color: #a4def9;" onClick="document.getElementById('colorchoice').value='a4def9'">
+        </div>
+        <!--<select name="time">-->
         <!--<option value="70d5d8" style="background-color: #70d5d8;"><pre>    </pre></option>-->
         <!--<option value="70d5d8" style="background-color: #70d5d8;"><pre>    </pre></option>-->
         <!--<option value="8dffcd" style="background-color: #8dffcd;"><pre>    </pre></option>-->
@@ -27,10 +30,12 @@
         <!--<option value="c09bd8" style="background-color: #c09bd8;"><pre>    </pre></option>-->
         <!--<option value="9f97f4" style="background-color: #9f97f4;"><pre>    </pre></option>-->
         <!--<option value="a4def9" style="background-color: #a4def9;"><pre>    </pre></option>-->
-    <!--</select>-->
-    <br>
-    <p class="colorText">Custom hex color:</p> <input type="text" name="color" id="colorchoice" maxlength="6">
-    <br>
-    <br>
-    <button>Submit</button>
-</form>
+        <!--</select>-->
+        <div>
+            <label class="colorText" for="colorchoice">Custom hex color:</label>
+            <input type="text" name="color" id="colorchoice" maxlength="6">
+        </div>
+        <button class="submit" >Submit</button>
+    </form>
+</div>
+<hr>
