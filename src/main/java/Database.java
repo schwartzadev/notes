@@ -4,31 +4,32 @@ import java.util.List;
 import java.util.Random;
 
 public class Database {
+    private final Config config;
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/NOTES?useSSL=true";
-
-    static final String USER = Config.MySQLUser;
-    static final String PASS = Config.MySQLPass;
     private static final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
 
-    public static List<Note> getAllNotes() throws Exception {
-        Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
+    public Database(Config config) {
+        this.config = config;
+    }
+
+    public List<Note> getAllNotes() throws Exception {
+        Connection conn = DriverManager.getConnection(config.getDbUrl(),config.getSqlUsername(),config.getSqlPassword());
         return getNotes(conn.prepareStatement("SELECT * FROM Notes;" ));
     }
 
-    public static List<Note> getActiveNotes() throws Exception {
+    public List<Note> getActiveNotes() throws Exception {
         /**
          * Returns all notes that are not archived
          */
-        Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
+        Connection conn = DriverManager.getConnection(config.getDbUrl(),config.getSqlUsername(),config.getSqlPassword());
         return getNotes(conn.prepareStatement("select * from notes where archived = 0 order by id desc;" ));
     }
 
 
-    public static List<Note> getNotes(PreparedStatement sql) throws Exception {
+    public List<Note> getNotes(PreparedStatement sql) throws Exception {
         List<Note> notes = new ArrayList<Note>();
         Class.forName("com.mysql.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
+        Connection conn = DriverManager.getConnection(config.getDbUrl(),config.getSqlUsername(),config.getSqlPassword());
         ResultSet rs = sql.executeQuery();
         while(rs.next()){
             String title = rs.getString("title");
@@ -42,16 +43,35 @@ public class Database {
         return notes;
     }
 
+    public void addNote(Note n) throws Exception{
+        Connection conn = DriverManager.getConnection(config.getDbUrl(),config.getSqlUsername(),config.getSqlPassword());
+        PreparedStatement sql =  conn.prepareStatement(
+                "INSERT into notes VALUES ( ? , ? , ? , ? , ? )" );
+        sql.setInt(1, n.getId());
+        sql.setString(2, n.getTitle());
+        sql.setString(3, n.getBody());
+        sql.setString(4, n.getColor());
+        sql.setInt(5, n.getArchived());
+        Database.executeQuery(conn, sql);
+    }
 
-    public static String getRandom(String[] array) {
+    public void deleteNote(int id) throws Exception{
+        Connection conn = DriverManager.getConnection(config.getDbUrl(),config.getSqlUsername(),config.getSqlPassword());
+        PreparedStatement sql =  conn.prepareStatement(
+                "update notes set archived = 1 where id = ? ;" );
+        sql.setInt(1, id);
+        Database.executeQuery(conn, sql);
+    }
+
+    public String getRandom(String[] array) {
         int rnd = new Random().nextInt(array.length);
         return array[rnd];
     }
 
-    public static void setNoteColor(Note n, String color) {
+    public void setNoteColor(Note n, String color) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(DB_URL,USER,PASS);
+            Connection conn = DriverManager.getConnection(config.getDbUrl(),config.getSqlUsername(),config.getSqlPassword());
             PreparedStatement sql =  conn.prepareStatement(
                     "UPDATE notes SET color = ? WHERE id = ? ;" );
             sql.setString(1, color);
@@ -73,7 +93,7 @@ public class Database {
         }
     }
 
-    public static String generateNoteHtml(Note note) {
+    public String generateNoteHtml(Note note) {
         StringBuilder sb = new StringBuilder();
         if (note.getColor() == null) {
             note.setColor(getRandom(colors)); // sets color for this load
@@ -95,11 +115,11 @@ public class Database {
         return sb.toString();
     }
 
-    public static int getMaxID() {
+    public int getMaxID() {
         int max = -1;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            Connection conn = DriverManager.getConnection(config.getDbUrl(),config.getSqlUsername(),config.getSqlPassword());
             PreparedStatement sql = conn.prepareStatement("select max(id) from notes;");
             ResultSet rs = sql.executeQuery();
             while (rs.next()) {

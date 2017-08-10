@@ -7,9 +7,6 @@
 // START MYSQL (USE MYSQL CLI CLIENT)
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.util.List;
 
 import io.javalin.Javalin;
@@ -31,17 +28,7 @@ public class Main {
             if (n.getColor().equals("")) {
                 n.setColor(null);
             }
-
-            Connection conn = DriverManager.getConnection(Database.DB_URL,Database.USER,Database.PASS);
-            PreparedStatement sql =  conn.prepareStatement(
-                    "INSERT into notes VALUES ( ? , ? , ? , ? , ? )" );
-            sql.setInt(1, n.getId());
-            sql.setString(2, n.getTitle());
-            sql.setString(3, n.getBody());
-            sql.setString(4, n.getColor());
-            sql.setInt(5, n.getArchived());
-            Database.executeQuery(conn, sql);
-
+            Database.addNote(n);
 
             ctx.redirect("/index.html"); // redirect
             System.out.println("created " + n.getId() + "...");
@@ -65,15 +52,9 @@ public class Main {
 
         app.get("/delete/:id", ctx -> {
             System.out.println(("deleting " + ctx.param("id")) + "...");
-            int id;
             try {
-                id = Integer.parseInt(ctx.param("id"));
                 ctx.redirect("/index.html"); // redirect
-                Connection conn = DriverManager.getConnection(Database.DB_URL,Database.USER,Database.PASS);
-                PreparedStatement sql =  conn.prepareStatement(
-                        "update notes set archived = 1 where id = ? ;" );
-                sql.setInt(1, id);
-                Database.executeQuery(conn, sql);
+                Database.deleteNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
             } catch (NumberFormatException nfe) {
                 ctx.html("invalid request. Specify a note id to delete.<br><a href=\"/index.html\">return to home</a>");
             }
