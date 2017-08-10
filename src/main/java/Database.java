@@ -54,7 +54,7 @@ public class Database {
         sql.setString(2, n.getTitle());
         sql.setString(3, n.getBody());
         sql.setString(4, n.getColor());
-        sql.setInt(5, n.getArchived());
+        sql.setBoolean(5, n.getArchived());
         Database.executeQuery(conn, sql);
     }
 
