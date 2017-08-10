@@ -32,8 +32,9 @@
 	bottom: .5em;
 }
 
-.toolbar img.trash {
+.toolbar img.icon {
 	width: 25px;
+	padding-right: 10px;
 }
 
 .content {

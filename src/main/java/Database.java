@@ -58,11 +58,39 @@ public class Database {
         Database.executeQuery(conn, sql);
     }
 
-    public void deleteNote(int id) throws Exception{
+    public void deleteNote(int id) throws Exception {
+        PreparedStatement sql =  conn.prepareStatement(
+                "delete from notes WHERE id = ? ;" );
+        sql.setInt(1, id);
+        Database.executeQuery(conn, sql);
+    }
+
+    public void archiveNote(int id) throws Exception{
         PreparedStatement sql =  conn.prepareStatement(
                 "update notes set archived = 1 where id = ? ;" );
         sql.setInt(1, id);
         Database.executeQuery(conn, sql);
+    }
+
+    public Note getNoteByID(int id) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement(
+                    "select * from notes where id=?;" );
+            sql.setInt(1, id);
+            ResultSet rs = sql.executeQuery();
+            while(rs.next()){
+                String title = rs.getString("title");
+                int noteId = Integer.parseInt(rs.getString("id"));
+                String body = rs.getString("body");
+                String color = rs.getString("color");
+                return new Note(title, body, id, color);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // if try fails
     }
 
     public String getRandom(String[] array) {
@@ -109,7 +137,8 @@ public class Database {
         } else {
             sb.append("<p class=\"content\">").append(note.getBody()).append("</p>");
         }
-        sb.append("<div class=\"toolbar\">\n" + "<a href=\"/delete/").append(note.getId()).append("\">").append("<img class=\"trash\" src=\"./img/trash.svg\"></a>\n").append("</div");
+        sb.append("<div class=\"toolbar\">\n" + "<a href=\"/delete/").append(note.getId()).append("\">").append("<img class=\"icon\" src=\"./img/trash.svg\"></a>\n").append("</div");
+        sb.append("<div class=\"toolbar\">\n" + "<a href=\"/edit/").append(note.getId()).append("\">").append("<img class=\"icon\" src=\"./img/pencil.svg\"></a>\n").append("</div");
         sb.append("</div>");
         sb.append("</div>");
         sb.append("</div>");
