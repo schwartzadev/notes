@@ -1,5 +1,6 @@
 # notes
-A server-side notes application using MySQL and Javalin (Jetty)
+A server-side notes application using MySQL and Javalin (based on Jetty)
+![Screenshot of Notes Draft](https://i.imgur.com/ljW8ko9.png)
 
 ## setup
 ### MySQL
@@ -25,6 +26,4 @@ public class Config {
 }
 ```
 
-Once oyu have made the database and the `Config.java` file, you should be ready to go. Run the program by running `Main.main()`
-
-![Screenshot of Notes Draft](https://i.imgur.com/ecNifxP.png)
+Once you have made the database and the `Config.java` file, you should be ready to go. Run the program by running `Main.main()`
