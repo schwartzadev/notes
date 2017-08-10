@@ -8,7 +8,7 @@
 
 public class Main {
     public static void main(String[] args) {
-        NoteResource noteResource = new NoteResource(new DefaultConfig());
+        new NoteEndpoints(new DefaultConfig());
+//        NoteEndpoints noteResource = new NoteEndpoints(new DefaultConfig());
     }
-
 }

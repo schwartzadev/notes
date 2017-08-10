@@ -7,11 +7,11 @@ import java.util.List;
 /**
  * Created by Andrew Schwartz on 8/9/17.
  */
-public class NoteResource {
+public class NoteEndpoints {
     private Javalin app;
     private Database db;
 
-    public NoteResource(Config cfg) {
+    public NoteEndpoints(Config cfg) {
         this.db = new Database(cfg);
         Javalin newApp = io.javalin.Javalin.create()
                 .port(7777)
