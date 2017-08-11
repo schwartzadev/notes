@@ -11,8 +11,8 @@ public class NoteEndpoints {
     private Javalin app;
     private Database db;
 
-    public NoteEndpoints(Config cfg) {
-        this.db = new Database(cfg);
+    public NoteEndpoints(Database db) {
+        this.db = db;
         Javalin newApp = io.javalin.Javalin.create()
                 .port(7777)
                 .enableStaticFiles("/public")

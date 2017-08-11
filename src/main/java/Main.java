@@ -8,7 +8,8 @@
 
 public class Main {
     public static void main(String[] args) {
-        new NoteEndpoints(new DefaultConfig());
+        Database database = new Database(new DefaultConfig());
+        new NoteEndpoints(database);
 //        NoteEndpoints noteResource = new NoteEndpoints(new DefaultConfig());
     }
 }

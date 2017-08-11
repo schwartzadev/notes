@@ -55,21 +55,21 @@ public class Database {
         sql.setString(3, n.getBody());
         sql.setString(4, n.getColor());
         sql.setBoolean(5, n.getArchived());
-        Database.executeQuery(conn, sql);
+        Database.executeQuery(sql);
     }
 
     public void deleteNote(int id) throws Exception {
         PreparedStatement sql =  conn.prepareStatement(
                 "delete from notes WHERE id = ? ;" );
         sql.setInt(1, id);
-        Database.executeQuery(conn, sql);
+        Database.executeQuery(sql);
     }
 
     public void archiveNote(int id) throws Exception{
         PreparedStatement sql =  conn.prepareStatement(
                 "update notes set archived = 1 where id = ? ;" );
         sql.setInt(1, id);
-        Database.executeQuery(conn, sql);
+        Database.executeQuery(sql);
     }
 
     public Note getNoteByID(int id) {
@@ -112,11 +112,11 @@ public class Database {
         }
     }
 
-    public static void executeQuery(Connection conn, PreparedStatement sql) {
+    public static void executeQuery(PreparedStatement sql) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             sql.executeUpdate();
-            // conn.close();
+//             conn.close();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
