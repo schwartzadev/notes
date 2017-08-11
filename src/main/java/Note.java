@@ -7,6 +7,7 @@ public class Note {
     private int id;
     private String color;
     private boolean archived; // 0 is false, non-zero is true (will use 1)
+    private String html;
 
     public Note(String title, String body, int id, String color) {
         this.title = title;
@@ -14,12 +15,30 @@ public class Note {
         this.id = id;
         this.color = color;
         this.archived = false; // not archived
+//        this.html = null;
+    }
+
+    public Note(String title, String body, int id, String color, String html) {
+        this.title = title;
+        this.body = body;
+        this.id = id;
+        this.color = color;
+        this.archived = false; // not archived
+        this.html = html;
     }
 
     public boolean getArchived() {
         return archived;
     }
 
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
+    }
 
     public void archive() {
         this.archived = true;

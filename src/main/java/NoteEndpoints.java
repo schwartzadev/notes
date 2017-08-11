@@ -1,4 +1,7 @@
 import io.javalin.Javalin;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,6 +13,8 @@ import java.util.List;
 public class NoteEndpoints {
     private Javalin app;
     private Database db;
+    private Parser parser = Parser.builder().build();
+    private HtmlRenderer renderer = HtmlRenderer.builder().build();
 
     public NoteEndpoints(Database db) {
         this.db = db;
@@ -71,6 +76,7 @@ public class NoteEndpoints {
 
     private void addUpdate() {
         getApp().post("/update-note", ctx -> {
+            Node body = parser.parse(ctx.formParam("body"));
             int id = -1;
             try {
                 id = Integer.parseInt(ctx.formParam("id")); // can throw nfe
@@ -78,7 +84,7 @@ public class NoteEndpoints {
                 System.out.println("***update " + id + " failed");
             }
 
-            Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), id, ctx.formParam("color"));
+            Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), id, ctx.formParam("color"), renderer.render(body));
             if (n.getTitle() != null && n.getTitle().equals("")) {
                 n.setTitle(null);
             }
@@ -96,6 +102,7 @@ public class NoteEndpoints {
     private void addIndex() {
         getApp().get("index.html", ctx -> {
             StringBuilder sb = new StringBuilder();
+            sb.append(new String(Files.readAllBytes(Paths.get("src/main/resources/public/header.html"))));
             String content = new String(Files.readAllBytes(Paths.get("src/main/resources/public/index.html")));
             sb.append(content);
             System.out.println("checking notes...");
@@ -112,7 +119,8 @@ public class NoteEndpoints {
     }
     private void addMakeNote() {
         getApp().post("/make-note", ctx -> {
-            Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), (getDb().getMaxID()+1), ctx.formParam("color"));
+            Node body = parser.parse(ctx.formParam("body"));
+            Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), (getDb().getMaxID()+1), ctx.formParam("color"), renderer.render(body));
             if (n.getTitle().equals("")) {
                 n.setTitle(null);;
             }

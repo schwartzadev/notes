@@ -78,6 +78,27 @@ textarea {
   height: 80px;
 }
 
+.topnav {
+    background-color: #eeeeee;
+    overflow: hidden;
+    margin-bottom: 1em;
+}
+
+.topnav a {
+    float: left;
+    display: block;
+    color: #222222;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
 label[for=textarea],
 textarea {
   display: inline-block;

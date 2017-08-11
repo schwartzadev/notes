@@ -1,6 +1,5 @@
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -12,8 +11,8 @@ public class Database {
     private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
     private Connection conn;
-    private Parser parser = Parser.builder().build();
-    private HtmlRenderer renderer = HtmlRenderer.builder().build();
+//    private Parser parser = Parser.builder().build();
+//    private HtmlRenderer renderer = HtmlRenderer.builder().build();
 
     public Database(Config config) {
         try {
@@ -44,7 +43,8 @@ public class Database {
             int id = Integer.parseInt(rs.getString("id"));
             String body = rs.getString("body");
             String color = rs.getString("color");
-            notes.add(new Note(title, body, id, color));
+            String html = rs.getString("html");
+            notes.add(new Note(title, body, id, color, html));
         }
         rs.close();
         // conn.close();
@@ -53,12 +53,13 @@ public class Database {
 
     public void addNote(Note n) throws Exception{
         PreparedStatement sql =  conn.prepareStatement(
-                "INSERT into notes VALUES ( ? , ? , ? , ? , ? )" );
+                "INSERT into notes VALUES ( ? , ? , ? , ? , ?, ? )" );
         sql.setInt(1, n.getId());
         sql.setString(2, n.getTitle());
         sql.setString(3, n.getBody());
         sql.setString(4, n.getColor());
         sql.setBoolean(5, n.getArchived());
+        sql.setString(6, n.getHtml());
         Database.executeQuery(sql);
     }
 
@@ -127,7 +128,7 @@ public class Database {
     }
 
     public String generateNoteHtml(Note note) {
-        Node body = parser.parse(note.getBody());
+//        Node body = parser.parse(note.getBody());
         StringBuilder sb = new StringBuilder();
         if (note.getColor() == null) {
             note.setColor(getRandom(colors)); // sets color for this load
@@ -138,10 +139,9 @@ public class Database {
             sb.append("<h2 class=\"title\">").append(note.getTitle()).append("</h2>");
         }
         if (note.getTitle() == null) {
-//            sb.append("<p class=\"content larger\">").append(note.getBody()).append("</p>");
-            sb.append("<div class=\"content larger\">").append(renderer.render(body)).append("</div>");
+            sb.append("<div class=\"content larger\">").append(note.getHtml()).append("</div>");
         } else {
-            sb.append("<div class=\"content hastitle\">").append(renderer.render(body)).append("</div>");
+            sb.append("<div class=\"content hastitle\">").append(note.getHtml()).append("</div>");
         }
         sb.append("<div class=\"toolbar\">\n" + "<a href=\"/delete/").append(note.getId()).append("\">").append("<img class=\"icon\" src=\"./img/trash.svg\"></a>\n").append("</div");
         sb.append("<div class=\"toolbar\">\n" + "<a href=\"/edit/").append(note.getId()).append("\">").append("<img class=\"icon\" src=\"./img/pencil.svg\"></a>\n").append("</div");
