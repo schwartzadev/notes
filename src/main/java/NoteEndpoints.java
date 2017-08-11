@@ -49,6 +49,7 @@ public class NoteEndpoints {
                 ctx.html("invalid request. Specify a note id to edit.<br><a href=\"/index.html\">return to home</a>");
             }
             Note n = getDb().getNoteByID(id);
+            sb.append("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"/styles.css\"></head>");
             sb.append("<form id=\"note-factory\" method=\"post\" action=\"/update-note\">\n" +
                     "            <label for=\"title\">Title:</label>\n");
             if (n.getTitle() != null) {

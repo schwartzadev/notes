@@ -39,12 +39,26 @@
 
 .content {
     padding-right: 20px;
-    font-size: 1.3em;
+    /*font-size: 1.8em;*/
     white-space: pre-wrap;
 }
 
-p.larger {
+.hastitle {
+    font-size: 1.5em;
+}
+
+
+.larger {
     font-size: 2em;
+}
+
+.content ul {
+    margin: 0;
+}
+
+.content p,
+ .34title {
+    margin-bottom: 0;
 }
 
 .colorButtons input[type="button"] {
@@ -60,7 +74,7 @@ p.larger {
 
 textarea {
   width: 200px;
-  font-family: serif;
+  font-family: sans-serif;
   height: 80px;
 }
 
