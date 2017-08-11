@@ -13,7 +13,8 @@ CREATE TABLE `notes` (
   `title` varchar(255) DEFAULT NULL,
   `body` varchar(2000) DEFAULT NULL,
   `color` varchar(6) DEFAULT NULL,
-  `archived` tinyint(1) DEFAULT '0'
+  `archived` tinyint(1) DEFAULT '0',
+  `html` varchar(2000) DEFAULT NULL
 )
 ```
 
