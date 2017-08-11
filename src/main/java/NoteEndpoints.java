@@ -3,6 +3,8 @@ import io.javalin.Javalin;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.owasp.html.PolicyFactory;
+import org.owasp.html.Sanitizers;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +19,7 @@ public class NoteEndpoints {
     private Database db;
     private Parser parser = Parser.builder().build();
     private HtmlRenderer renderer = HtmlRenderer.builder().build();
+    private PolicyFactory policy = Sanitizers.FORMATTING.and(Sanitizers.FORMATTING);
 
     public NoteEndpoints(Database db) {
         this.db = db;
@@ -33,7 +36,18 @@ public class NoteEndpoints {
         getApp().post("/make-note", this::makeNote);
         getApp().get("/delete/:id", this::deleteNote);
         getApp().get("/edit/:id", this::editNote);
+        getApp().get("/archived.html", this::archived);
         getApp().post("/update-note", this::updateNote);
+    }
+
+    private void archived(Context ctx) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(new String(Files.readAllBytes(Paths.get("src/main/resources/public/header.html"))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ctx.html(sb.toString());
     }
 
 
@@ -59,7 +73,6 @@ public class NoteEndpoints {
             ctx.html("invalid request. Specify a note id to edit.<br><a href=\"/index.html\">return to home</a>");
         }
         Note n = getDb().getNoteByID(id);
-        sb.append("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"/styles.css\"></head>");
         sb.append("<form id=\"note-factory\" method=\"post\" action=\"/update-note\">\n" +
                 "            <label for=\"title\">Title:</label>\n");
         if (n.getTitle() != null) {
@@ -79,7 +92,8 @@ public class NoteEndpoints {
     }
 
     private void updateNote(Context ctx) {
-        Node body = parser.parse(ctx.formParam("body"));
+        String safe = policy.sanitize((ctx.formParam("body")));
+        Node body = parser.parse(safe);
         int id = -1;
         try {
             id = Integer.parseInt(ctx.formParam("id")); // can throw nfe
@@ -87,7 +101,7 @@ public class NoteEndpoints {
             System.out.println("***update " + id + " failed");
         }
 
-        Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), id, ctx.formParam("color"), renderer.render(body));
+        Note n = new Note(ctx.formParam("title"), safe, id, ctx.formParam("color"), renderer.render(body));
         if (n.getTitle() != null && n.getTitle().equals("")) {
             n.setTitle(null);
         }
@@ -120,9 +134,11 @@ public class NoteEndpoints {
         sb.append("</div>"); // end container
         ctx.html(sb.toString());
     }
+
     private void makeNote(Context ctx) {
-        Node body = parser.parse(ctx.formParam("body"));
-        Note n = new Note(ctx.formParam("title"), ctx.formParam("body"), (getDb().getMaxID()+1), ctx.formParam("color"), renderer.render(body));
+        String safe = policy.sanitize(ctx.formParam("body"));
+        Node body = parser.parse(safe);
+        Note n = new Note(ctx.formParam("title"), safe, (getDb().getMaxID()+1), ctx.formParam("color"), renderer.render(body));
         if (n.getTitle().equals("")) {
             n.setTitle(null);;
         }
@@ -134,6 +150,7 @@ public class NoteEndpoints {
         ctx.redirect("/index.html"); // redirect
         System.out.println("created " + n.getId() + "...");
     }
+
     public void setApp(Javalin app) {
         this.app = app;
     }

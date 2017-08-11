@@ -53,8 +53,13 @@
 }
 
 .content ul {
+    padding-left: 20px;
     margin: 0;
 }
+
+/*.content * {
+    margin: 0;
+}*/
 
 .content p,
  .34title {
