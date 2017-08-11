@@ -22,59 +22,89 @@ public class Database {
         }
     }
 
-    public List<Note> getAllNotes() throws Exception {
-        return getNotes(conn.prepareStatement("SELECT * FROM Notes;" ));
+    public List<Note> getAllNotes() {
+        try {
+            return getNotes(conn.prepareStatement("SELECT * FROM Notes;" ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public List<Note> getActiveNotes() throws Exception {
+    public List<Note> getActiveNotes() {
         /**
          * Returns all notes that are not archived
          */
-        return getNotes(conn.prepareStatement("select * from notes where archived = 0 order by id desc;" ));
-    }
-
-
-    public List<Note> getNotes(PreparedStatement sql) throws Exception {
-        List<Note> notes = new ArrayList<Note>();
-        Class.forName("com.mysql.jdbc.Driver");
-        ResultSet rs = sql.executeQuery();
-        while(rs.next()){
-            String title = rs.getString("title");
-            int id = Integer.parseInt(rs.getString("id"));
-            String body = rs.getString("body");
-            String color = rs.getString("color");
-            String html = rs.getString("html");
-            notes.add(new Note(title, body, id, color, html));
+        try {
+            return getNotes(conn.prepareStatement("select * from notes where archived = 0 order by id desc;" ));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        rs.close();
-        // conn.close();
-        return notes;
+        return null;
     }
 
-    public void addNote(Note n) throws Exception{
-        PreparedStatement sql =  conn.prepareStatement(
-                "INSERT into notes VALUES ( ? , ? , ? , ? , ?, ? )" );
-        sql.setInt(1, n.getId());
-        sql.setString(2, n.getTitle());
-        sql.setString(3, n.getBody());
-        sql.setString(4, n.getColor());
-        sql.setBoolean(5, n.getArchived());
-        sql.setString(6, n.getHtml());
-        Database.executeQuery(sql);
+
+    public List<Note> getNotes(PreparedStatement sql) {
+        List<Note> notes = new ArrayList<Note>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            ResultSet rs = sql.executeQuery();
+            while(rs.next()){
+                String title = rs.getString("title");
+                int id = Integer.parseInt(rs.getString("id"));
+                String body = rs.getString("body");
+                String color = rs.getString("color");
+                String html = rs.getString("html");
+                notes.add(new Note(title, body, id, color, html));
+            }
+            rs.close();
+            // conn.close();
+            return notes;
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public void deleteNote(int id) throws Exception {
-        PreparedStatement sql =  conn.prepareStatement(
-                "delete from notes WHERE id = ? ;" );
-        sql.setInt(1, id);
-        Database.executeQuery(sql);
+    public void addNote(Note n) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement(
+                    "INSERT into notes VALUES ( ? , ? , ? , ? , ?, ? )" );
+            sql.setInt(1, n.getId());
+            sql.setString(2, n.getTitle());
+            sql.setString(3, n.getBody());
+            sql.setString(4, n.getColor());
+            sql.setBoolean(5, n.getArchived());
+            sql.setString(6, n.getHtml());
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void archiveNote(int id) throws Exception{
-        PreparedStatement sql =  conn.prepareStatement(
-                "update notes set archived = 1 where id = ? ;" );
-        sql.setInt(1, id);
-        Database.executeQuery(sql);
+    public void deleteNote(int id) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement(
+                    "delete from notes WHERE id = ? ;" );
+            sql.setInt(1, id);
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void archiveNote(int id) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement(
+                    "update notes set archived = 1 where id = ? ;" );
+            sql.setInt(1, id);
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public Note getNoteByID(int id) {
