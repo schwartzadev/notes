@@ -41,15 +41,9 @@ public class NoteEndpoints {
     }
 
     private void archived(Context ctx) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            sb.append(new String(Files.readAllBytes(Paths.get("src/main/resources/public/header.html"))));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ctx.html(sb.toString());
+        List<Note> notes = getDb().getArchivedNotes();
+        notePage(ctx, notes);
     }
-
 
     private void deleteNote(Context ctx) {
         System.out.println(("deleting " + ctx.param("id")) + "...");
@@ -115,7 +109,10 @@ public class NoteEndpoints {
         System.out.println("created " + n.getId() + "...");
     }
 
-    private void index(Context ctx) {
+    private void notePage(Context ctx, List<Note> notes) {
+        /**
+         * template for index and archived pages
+         */
         StringBuilder sb = new StringBuilder();
         try {
             sb.append(new String(Files.readAllBytes(Paths.get("src/main/resources/public/header.html"))));
@@ -124,15 +121,19 @@ public class NoteEndpoints {
             e.printStackTrace();
         }
         System.out.println("checking notes...");
-        List<Note> dbNotes = getDb().getActiveNotes();
         sb.append("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"></head>");
         sb.append("<h1 class=\"pagetitle\">all notes</h1>");
         sb.append("<div class=\"container\">");
-        for (Note n : dbNotes) {
+        for (Note n : notes) {
             sb.append(getDb().generateNoteHtml(n));
         }
         sb.append("</div>"); // end container
         ctx.html(sb.toString());
+    }
+
+    private void index(Context ctx) {
+        List<Note> dbNotes = getDb().getActiveNotes();
+        notePage(ctx, dbNotes);
     }
 
     private void makeNote(Context ctx) {

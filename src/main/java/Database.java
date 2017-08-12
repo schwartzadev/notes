@@ -1,11 +1,9 @@
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import org.commonmark.node.*;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 
 public class Database {
     private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -31,18 +29,29 @@ public class Database {
         return null;
     }
 
+    public List<Note> getArchivedNotes() {
+        return getNotesByArchived(true);
+    }
     public List<Note> getActiveNotes() {
         /**
          * Returns all notes that are not archived
          */
+        return getNotesByArchived(false);
+    }
+
+    private List<Note> getNotesByArchived(Boolean bool) {
+        /**
+         * gets archived / non-archived (active) notes, depending on bool
+         */
         try {
-            return getNotes(conn.prepareStatement("select * from notes where archived = 0 order by id desc;" ));
+            PreparedStatement statement = conn.prepareStatement("select * from notes where archived = ? order by id desc;");
+            statement.setBoolean(1, bool);
+            return getNotes(statement);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
 
     public List<Note> getNotes(PreparedStatement sql) {
         List<Note> notes = new ArrayList<Note>();
