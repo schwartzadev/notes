@@ -33,6 +33,7 @@ public class Database {
     public List<Note> getArchivedNotes() {
         return getNotesByArchived(true);
     }
+
     public List<Note> getActiveNotes() {
         /**
          * Returns all notes that are not archived
@@ -110,6 +111,18 @@ public class Database {
         try {
             sql = conn.prepareStatement(
                     "update notes set archived = 1 where id = ? ;" );
+            sql.setInt(1, id);
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void restoreNote(int id) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement(
+                    "update notes set archived = 0 where id = ? ;" );
             sql.setInt(1, id);
             Database.executeQuery(sql);
         } catch (SQLException e) {

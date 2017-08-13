@@ -38,6 +38,7 @@ public class NoteEndpoints {
         getApp().post("/make-note", this::makeNote);
         getApp().get("/delete/:id", this::deleteNote);
         getApp().get("/edit/:id", this::editNote);
+        getApp().get("/restore/:id", this::restore);
         getApp().get("/archived.html", this::archived);
         getApp().post("/update-note", this::updateNote);
     }
@@ -48,6 +49,18 @@ public class NoteEndpoints {
         icons.put("edit", "pencil");
         icons.put("restore", "undo");
         notePage(ctx, notes, icons);
+    }
+
+    private void restore(Context ctx) {
+        System.out.println("restoring " + ctx.param("id") + "...");
+        try {
+            ctx.redirect("/index.html"); // redirect
+            getDb().restoreNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
+        } catch (NumberFormatException nfe) {
+            ctx.html("invalid request. Specify a note id to restore.<br><a href=\"/index.html\">return to home</a>");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void deleteNote(Context ctx) {
