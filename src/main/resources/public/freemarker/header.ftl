@@ -2,6 +2,4 @@
 <div class="topnav">
     <a href="index.html">View notes</a>
     <a href="archived.html">View archived notes</a>
-    <!--<a href="#contact">Contact</a>-->
-    <!--<a href="#about">About</a>-->
 </div>
