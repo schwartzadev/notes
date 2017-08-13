@@ -9,7 +9,9 @@ import org.owasp.html.Sanitizers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Andrew Schwartz on 8/9/17.
@@ -42,7 +44,10 @@ public class NoteEndpoints {
 
     private void archived(Context ctx) {
         List<Note> notes = getDb().getArchivedNotes();
-        notePage(ctx, notes);
+        Map<String, String> icons = new HashMap<String, String>();
+        icons.put("edit", "pencil");
+        icons.put("restore", "undo");
+        notePage(ctx, notes, icons);
     }
 
     private void deleteNote(Context ctx) {
@@ -109,7 +114,7 @@ public class NoteEndpoints {
         System.out.println("created " + n.getId() + "...");
     }
 
-    private void notePage(Context ctx, List<Note> notes) {
+    private void notePage(Context ctx, List<Note> notes, Map<String, String> icons) {
         /**
          * template for index and archived pages
          */
@@ -125,7 +130,7 @@ public class NoteEndpoints {
         sb.append("<h1 class=\"pagetitle\">all notes</h1>");
         sb.append("<div class=\"container\">");
         for (Note n : notes) {
-            sb.append(getDb().generateNoteHtml(n));
+            sb.append(getDb().generateNoteHtml(n, icons));
         }
         sb.append("</div>"); // end container
         ctx.html(sb.toString());
@@ -133,7 +138,11 @@ public class NoteEndpoints {
 
     private void index(Context ctx) {
         List<Note> dbNotes = getDb().getActiveNotes();
-        notePage(ctx, dbNotes);
+        Map<String, String> icons = new HashMap<String, String>();
+        icons.put("delete", "trash");
+        icons.put("edit", "pencil");
+
+        notePage(ctx, dbNotes, icons);
     }
 
     private void makeNote(Context ctx) {

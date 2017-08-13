@@ -3,6 +3,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Database {
@@ -166,7 +167,7 @@ public class Database {
         }
     }
 
-    public String generateNoteHtml(Note note) {
+    public String generateNoteHtml(Note note, Map<String, String> iconDetails) {
 //        Node body = parser.parse(note.getBody());
         StringBuilder sb = new StringBuilder();
         if (note.getColor() == null) {
@@ -182,8 +183,11 @@ public class Database {
         } else {
             sb.append("<div class=\"content hastitle\">").append(note.getHtml()).append("</div>");
         }
-        sb.append("<div class=\"toolbar\">\n" + "<a href=\"/delete/").append(note.getId()).append("\">").append("<img class=\"icon\" src=\"./img/trash.svg\"></a>\n").append("</div");
-        sb.append("<div class=\"toolbar\">\n" + "<a href=\"/edit/").append(note.getId()).append("\">").append("<img class=\"icon\" src=\"./img/pencil.svg\"></a>\n").append("</div");
+
+        for (String key : iconDetails.keySet()) {
+            sb.append("<div class=\"toolbar\">\n<a href=\"/").append(key).append("/").append(note.getId()).append("\">")
+                    .append("<img class=\"icon\" src=\"./img/").append(iconDetails.get(key)).append(".svg\"></a>\n").append("</div");
+        }
         sb.append("</div>");
         sb.append("</div>");
         sb.append("</div>");
