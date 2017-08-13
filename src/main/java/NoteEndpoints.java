@@ -1,3 +1,6 @@
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import io.javalin.Context;
 import io.javalin.Javalin;
 import org.commonmark.node.Node;
@@ -6,12 +9,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Andrew Schwartz on 8/9/17.
@@ -45,10 +44,10 @@ public class NoteEndpoints {
 
     private void archived(Context ctx) {
         List<Note> notes = getDb().getArchivedNotes();
-        Map<String, String> icons = new HashMap<String, String>();
-        icons.put("edit", "pencil");
-        icons.put("restore", "undo");
-        notePage(ctx, notes, icons);
+        List<IconDetail> details = new ArrayList<>();
+        details.add(new IconDetail("pencil", "edit"));
+        details.add(new IconDetail("undo", "restore"));
+        notePage(ctx, notes, details);
     }
 
     private void restore(Context ctx) {
@@ -127,35 +126,20 @@ public class NoteEndpoints {
         System.out.println("created " + n.getId() + "...");
     }
 
-    private void notePage(Context ctx, List<Note> notes, Map<String, String> icons) {
+    private void notePage(Context ctx, List<Note> notes, List<IconDetail> iconDetails) {
         /**
          * template for index and archived pages
          */
-        StringBuilder sb = new StringBuilder();
-        try {
-            sb.append(new String(Files.readAllBytes(Paths.get("src/main/resources/public/header.html"))));
-            sb.append(new String(Files.readAllBytes(Paths.get("src/main/resources/public/index.html"))));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("checking notes...");
-        sb.append("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"></head>");
-        sb.append("<h1 class=\"pagetitle\">all notes</h1>");
-        sb.append("<div class=\"container\">");
-        for (Note n : notes) {
-            sb.append(getDb().generateNoteHtml(n, icons));
-        }
-        sb.append("</div>"); // end container
-        ctx.html(sb.toString());
+        TemplateEngine te = new TemplateEngine();
+        ctx.html(te.noteListHtml(notes, iconDetails));
     }
 
     private void index(Context ctx) {
         List<Note> dbNotes = getDb().getActiveNotes();
-        Map<String, String> icons = new HashMap<String, String>();
-        icons.put("delete", "trash");
-        icons.put("edit", "pencil");
-
-        notePage(ctx, dbNotes, icons);
+        List<IconDetail> details = new ArrayList<>();
+        details.add(new IconDetail("trash", "delete"));
+        details.add(new IconDetail("pencil", "edit"));
+        notePage(ctx, dbNotes, details);
     }
 
     private void makeNote(Context ctx) {

@@ -1,17 +1,12 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class Database {
     private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
     private Connection conn;
-//    private Parser parser = Parser.builder().build();
-//    private HtmlRenderer renderer = HtmlRenderer.builder().build();
 
     public Database(Config config) {
         try {
@@ -178,33 +173,6 @@ public class Database {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public String generateNoteHtml(Note note, Map<String, String> iconDetails) {
-//        Node body = parser.parse(note.getBody());
-        StringBuilder sb = new StringBuilder();
-        if (note.getColor() == null) {
-            note.setColor(getRandom(colors)); // sets color for this load
-            setNoteColor(note, note.getColor()); // stores color for all future loads
-        }
-        sb.append("<div class=\"note\" id=\"").append(note.getId()).append("\" style=\"background-color:").append(note.getColor()).append("\";>");
-        if (note.getTitle() != null) {
-            sb.append("<h2 class=\"title\">").append(note.getTitle()).append("</h2>");
-        }
-        if (note.getTitle() == null) {
-            sb.append("<div class=\"content larger\">").append(note.getHtml()).append("</div>");
-        } else {
-            sb.append("<div class=\"content hastitle\">").append(note.getHtml()).append("</div>");
-        }
-
-        for (String key : iconDetails.keySet()) {
-            sb.append("<div class=\"toolbar\">\n<a href=\"/").append(key).append("/").append(note.getId()).append("\">")
-                    .append("<img class=\"icon\" src=\"./img/").append(iconDetails.get(key)).append(".svg\"></a>\n").append("</div");
-        }
-        sb.append("</div>");
-        sb.append("</div>");
-        sb.append("</div>");
-        return sb.toString();
     }
 
     public int getMaxID() {
