@@ -5,7 +5,6 @@ import java.util.Random;
 
 public class Database {
     private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private final String[] colors = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
     private Connection conn;
 
     public Database(Config config) {
@@ -144,11 +143,6 @@ public class Database {
             e.printStackTrace();
         }
         return null; // if try fails
-    }
-
-    public String getRandom(String[] array) {
-        int rnd = new Random().nextInt(array.length);
-        return array[rnd];
     }
 
     public void setNoteColor(Note n, String color) {

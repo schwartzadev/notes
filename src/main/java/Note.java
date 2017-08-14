@@ -1,3 +1,5 @@
+import java.util.Random;
+
 /**
  * Created by Andrew Schwartz on 8/7/17.
  */
@@ -30,7 +32,6 @@ public class Note {
     public boolean getArchived() {
         return archived;
     }
-
 
     public String getHtml() {
         return html;
@@ -68,8 +69,17 @@ public class Note {
         this.body=body;
     }
 
-    public String getColor(){
+    public String getColor() {
+        if (color == null) {
+            setColor(getRandomColor());
+        }
         return color;
+    }
+
+    public String getRandomColor() {
+        final String[] colors  = {"70d5d8", "8dffcd", "ebbab9", "eda6dd", "c09bd8", "9f97f4", "a4def9"};
+        int rnd = new Random().nextInt(colors.length);
+        return colors[rnd];
     }
 
     public void setColor(String color){
