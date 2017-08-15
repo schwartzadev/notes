@@ -1,7 +1,6 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Database {
     private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -75,7 +74,7 @@ public class Database {
         PreparedStatement sql = null;
         try {
             sql = conn.prepareStatement(
-                    "INSERT into notes VALUES ( ? , ? , ? , ? , ?, ? )" );
+                    "INSERT into notes VALUES ( ? , ? , ? , ? , ?, ?, 100 )" ); // TODO remove hardcoded user param
             sql.setInt(1, n.getId());
             sql.setString(2, n.getTitle());
             sql.setString(3, n.getBody());
@@ -169,20 +168,65 @@ public class Database {
         }
     }
 
-    public int getMaxID() {
+    public int getMaxID(String dbname) {
         int max = -1;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            PreparedStatement sql = conn.prepareStatement("select max(id) from notes;");
+            PreparedStatement sql = conn.prepareStatement("select max(id) from " + dbname + ";");
             ResultSet rs = sql.executeQuery();
             while (rs.next()) {
                 max = rs.getInt("max(id)");
             }
             rs.close();
-            // conn.close();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return max;
+    }
+
+    public void addUser(User u) {
+        PreparedStatement sql = null;
+        u.hashPassword();
+        try {
+            sql = conn.prepareStatement(
+                    "INSERT into users VALUES ( ? , ? , ? , ? )" );
+            sql.setInt(1, u.getId());
+            sql.setString(2, u.getUsername());
+            sql.setString(3, u.getHashedPass());
+            sql.setBoolean(4, u.isactive());
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getPasswordHashes() {
+        List<String> hashes = new ArrayList<>();
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement("select password from users;");
+            ResultSet rs = sql.executeQuery();
+            while (rs.next()) {
+                hashes.add(rs.getString("password"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return hashes;
+    }
+
+    public User lookupUserByUsername(String username) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement("select * from users where username = ?;");
+            sql.setString(1, username);
+            ResultSet rs = sql.executeQuery();
+            while (rs.next()) {
+                return new User(rs.getInt("id"), rs.getBoolean("isactive"), rs.getString("username"), rs.getString("password"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

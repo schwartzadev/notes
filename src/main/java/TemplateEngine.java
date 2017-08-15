@@ -30,4 +30,34 @@ public class TemplateEngine {
         System.out.println("checking notes...");
         return out.toString();
     }
+
+    public String registerPage() {
+        Configuration cfg = new Configuration();
+        Map<String, Object> root = new HashMap<>();
+        Writer out = new StringWriter();
+        freemarker.template.Template temp = null;
+        try {
+            temp = cfg.getTemplate("src/main/resources/public/freemarker/register.ftl");
+            temp.process(root, out);
+        } catch (IOException | TemplateException e) {
+            e.printStackTrace();
+        }
+        StringBuilder sb = new StringBuilder();
+        return out.toString();
+    }
+
+    public String loginPage() {
+        Configuration cfg = new Configuration();
+        Map<String, Object> root = new HashMap<>();
+        Writer out = new StringWriter();
+        freemarker.template.Template temp = null;
+        try {
+            temp = cfg.getTemplate("src/main/resources/public/freemarker/login.ftl");
+            temp.process(root, out);
+        } catch (IOException | TemplateException e) {
+            e.printStackTrace();
+        }
+        StringBuilder sb = new StringBuilder();
+        return out.toString();
+    }
 }

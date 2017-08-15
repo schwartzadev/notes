@@ -3,6 +3,7 @@ import io.javalin.Javalin;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.mindrot.jbcrypt.BCrypt;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
@@ -18,6 +19,8 @@ public class NoteEndpoints {
     private Parser parser = Parser.builder().build();
     private HtmlRenderer renderer = HtmlRenderer.builder().build();
     private PolicyFactory policy = Sanitizers.FORMATTING.and(Sanitizers.FORMATTING);
+    private TemplateEngine te = new TemplateEngine();
+
 
     public NoteEndpoints(Database db) {
         this.db = db;
@@ -37,7 +40,47 @@ public class NoteEndpoints {
         getApp().get("/restore/:id", this::restore);
         getApp().get("/archived.html", this::archived);
         getApp().post("/update-note", this::updateNote);
+        getApp().post("/signup", this::registerHandler);
+        getApp().get("/register", this::registerPage);
+        getApp().get("/login", this::loginPage);
+        getApp().post("/sign-in", this::loginHandler);
         getApp().get("/", this::rootRedirect);
+    }
+
+    private void loginPage(Context ctx) {
+        ctx.html(te.loginPage());
+    }
+
+    private void loginHandler(Context ctx) {
+        String username = ctx.formParam("username");
+        String password = ctx.formParam("pwd");
+
+
+        String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+        User user = db.lookupUserByUsername(ctx.formParam("username"));
+        ctx.html(BCrypt.checkpw(password, user.getPassword()) + "");
+        
+        // TODO redirect to index, with following sql:
+//        SELECT note
+//        FROM notes_table n, users_table u
+//        WHERE n.user_id = u.id;
+        // TODO add user to template, display username in corner
+        // TODO save cookie with user info
+
+    }
+
+    private void registerPage(Context ctx) {
+        ctx.html(te.registerPage());
+    }
+
+    private void registerHandler(Context ctx) {
+        boolean remmber = false;
+        if (ctx.formParam("remember").equals("on")) {
+            remmber = true;
+        }
+        User u = new User(db.getMaxID("users")+1, remmber, ctx.formParam("username"), ctx.formParam("pwd"));
+        db.addUser(u);
+        ctx.redirect("/login");
     }
 
     private void rootRedirect(Context ctx) {
@@ -132,7 +175,6 @@ public class NoteEndpoints {
         /**
          * template for index and archived pages
          */
-        TemplateEngine te = new TemplateEngine();
         ctx.html(te.noteListHtml(notes, iconDetails));
     }
 
@@ -147,7 +189,7 @@ public class NoteEndpoints {
     private void makeNote(Context ctx) {
         String safe = policy.sanitize(ctx.formParam("body"));
         Node body = parser.parse(safe);
-        Note n = new Note(ctx.formParam("title"), safe, (getDb().getMaxID()+1), ctx.formParam("color"), renderer.render(body));
+        Note n = new Note(ctx.formParam("title"), safe, (getDb().getMaxID("notes")+1), ctx.formParam("color"), renderer.render(body));
         if (n.getTitle().equals("")) {
             n.setTitle(null);;
         }
