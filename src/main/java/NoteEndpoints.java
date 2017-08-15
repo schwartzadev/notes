@@ -1,6 +1,3 @@
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import io.javalin.Context;
 import io.javalin.Javalin;
 import org.commonmark.node.Node;
@@ -40,6 +37,11 @@ public class NoteEndpoints {
         getApp().get("/restore/:id", this::restore);
         getApp().get("/archived.html", this::archived);
         getApp().post("/update-note", this::updateNote);
+        getApp().get("/", this::rootRedirect);
+    }
+
+    private void rootRedirect(Context ctx) {
+        ctx.redirect("/index.html");
     }
 
     private void archived(Context ctx) {
