@@ -1,6 +1,6 @@
 # notes
 A server-side notes application using MySQL and Javalin (based on Jetty)
-![Screenshot of Notes Draft](https://i.imgur.com/ljW8ko9.png)
+![Screenshot of Notes Draft](https://i.imgur.com/x3HpJAG.png)
 
 ## setup
 ### MySQL
