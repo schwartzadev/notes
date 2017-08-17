@@ -53,8 +53,6 @@ public class NoteEndpoints {
         context.redirect("/login");
     }
 
-    // todo add logout endpoint (delete cookie)
-
     private void loginPage(Context ctx) {
         ctx.html(te.loginPage());
     }
