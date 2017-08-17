@@ -49,4 +49,4 @@ You will also have to make a `config.json` file to hold your SQL information. It
 }
 ```
 
-Once you have made the database and the `Config.java` file, you should be ready to go. Run the program by running `Main.main()`
+Once you have made the database and the config file, you should be ready to go. Run the program by running `Main.main()`
