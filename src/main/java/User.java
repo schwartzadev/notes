@@ -66,6 +66,10 @@ public class User {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
+    public String hashUsername() {
+        return BCrypt.hashpw(username, BCrypt.gensalt());
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }

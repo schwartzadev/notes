@@ -7,26 +7,33 @@ public class Note {
     private String title;
     private String body;
     private int id;
+    private int userId;
     private String color;
     private boolean archived; // 0 is false, non-zero is true (will use 1)
     private String html;
 
-    public Note(String title, String body, int id, String color) {
+    public Note(String title, String body, int id, String color, int userId) {
         this.title = title;
         this.body = body;
         this.id = id;
         this.color = color;
         this.archived = false; // not archived
+        this.userId = userId;
 //        this.html = null;
     }
 
-    public Note(String title, String body, int id, String color, String html) {
+    public Note(String title, String body, int id, String color, String html, int userId) {
         this.title = title;
         this.body = body;
         this.id = id;
         this.color = color;
         this.archived = false; // not archived
         this.html = html;
+        this.userId = userId;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public boolean getArchived() {

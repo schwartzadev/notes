@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by Andrew Schwartz on 8/13/17.
  */
-public class TemplateEngine {
+public class TemplateEngine { // todo add sign out link, message with username in corner
     public String noteListHtml(List<Note> notes, List<IconDetail> iconDetails) {
         Configuration cfg = new Configuration();
         Map<String, Object> root = new HashMap<>();

@@ -47,26 +47,25 @@ public class NoteEndpoints {
         getApp().get("/", this::rootRedirect);
     }
 
+    // todo add logout endpoint (delete cookie)
+
     private void loginPage(Context ctx) {
         ctx.html(te.loginPage());
     }
 
     private void loginHandler(Context ctx) {
-        String username = ctx.formParam("username");
-        String password = ctx.formParam("pwd");
-
-
-        String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
         User user = db.lookupUserByUsername(ctx.formParam("username"));
-        ctx.html(BCrypt.checkpw(password, user.getPassword()) + "");
-        
-        // TODO redirect to index, with following sql:
-//        SELECT note
-//        FROM notes_table n, users_table u
-//        WHERE n.user_id = u.id;
-        // TODO add user to template, display username in corner
-        // TODO save cookie with user info
 
+        if (BCrypt.checkpw(ctx.formParam("pwd"), user.getPassword())) {
+//            correct password
+            ctx.html("correct pass");
+            String cookiecontent = db.saveLogin(user);
+            ctx.cookie("com.aschwartz.notes", cookiecontent);
+            ctx.redirect("/index.html");
+        }
+        else {
+            ctx.redirect("/login");
+        }
     }
 
     private void registerPage(Context ctx) {
@@ -78,8 +77,7 @@ public class NoteEndpoints {
         if (ctx.formParam("remember").equals("on")) {
             remmber = true;
         }
-        User u = new User(db.getMaxID("users")+1, remmber, ctx.formParam("username"), ctx.formParam("pwd"));
-        db.addUser(u);
+        db.addUser(new User(db.getMaxID("users")+1, remmber, ctx.formParam("username"), ctx.formParam("pwd")));
         ctx.redirect("/login");
     }
 
@@ -88,11 +86,16 @@ public class NoteEndpoints {
     }
 
     private void archived(Context ctx) {
-        List<Note> notes = getDb().getArchivedNotes();
-        List<IconDetail> details = new ArrayList<>();
-        details.add(new IconDetail("pencil", "edit"));
-        details.add(new IconDetail("undo", "restore"));
-        notePage(ctx, notes, details);
+        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != -1) {
+            List<Note> notes = getDb().getArchivedNotes(db.checkCookie(ctx.cookie("com.aschwartz.notes")));
+            List<IconDetail> details = new ArrayList<>();
+            details.add(new IconDetail("pencil", "edit"));
+            details.add(new IconDetail("undo", "restore"));
+            notePage(ctx, notes, details);
+        }
+        else {
+            ctx.redirect("/login");
+        }
     }
 
     private void restore(Context ctx) {
@@ -148,27 +151,33 @@ public class NoteEndpoints {
     }
 
     private void updateNote(Context ctx) {
-        String safe = policy.sanitize((ctx.formParam("body")));
-        Node body = parser.parse(safe);
-        int id = -1;
-        try {
-            id = Integer.parseInt(ctx.formParam("id")); // can throw nfe
-        } catch (NumberFormatException nfe) {
-            System.out.println("***update " + id + " failed");
-        }
+        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != -1) {
+            int userid = db.checkCookie(ctx.cookie("com.aschwartz.notes"));
+            String safe = policy.sanitize((ctx.formParam("body")));
+            Node body = parser.parse(safe);
+            int id = -1;
+            try {
+                id = Integer.parseInt(ctx.formParam("id")); // can throw nfe
+            } catch (NumberFormatException nfe) {
+                System.out.println("***update " + id + " failed");
+            }
 
-        Note n = new Note(ctx.formParam("title"), safe, id, ctx.formParam("color"), renderer.render(body));
-        if (n.getTitle() != null && n.getTitle().equals("")) {
-            n.setTitle(null);
-        }
-        if (n.getColor().equals("")) {
-            n.setColor(null);
-        }
-        getDb().deleteNote(id);
-        getDb().addNote(n);
+            Note n = new Note(ctx.formParam("title"), safe, id, ctx.formParam("color"), renderer.render(body), userid);
+            if (n.getTitle() != null && n.getTitle().equals("")) {
+                n.setTitle(null);
+            }
+            if (n.getColor().equals("")) {
+                n.setColor(null);
+            }
+            getDb().deleteNote(id);
+            getDb().addNote(n);
 
-        ctx.redirect("/index.html"); // redirect
-        System.out.println("created " + n.getId() + "...");
+            ctx.redirect("/index.html"); // redirect
+            System.out.println("created " + n.getId() + "...");
+        }
+        else {
+            ctx.redirect("/login");
+        }
     }
 
     private void notePage(Context ctx, List<Note> notes, List<IconDetail> iconDetails) {
@@ -179,7 +188,17 @@ public class NoteEndpoints {
     }
 
     private void index(Context ctx) {
-        List<Note> dbNotes = getDb().getActiveNotes();
+        // check for login cookie
+        String cookie = ctx.cookie("com.aschwartz.notes");
+        int loggedInUser = 0;
+        if (cookie != null) { // only check cookie if it exists
+            loggedInUser = db.checkCookie(cookie);
+            System.out.println(loggedInUser + " is logged in");
+        } if (loggedInUser==(-1) || loggedInUser==0) {
+            ctx.redirect("/login");
+        }
+
+        List<Note> dbNotes = getDb().getActiveNotes(loggedInUser);
         List<IconDetail> details = new ArrayList<>();
         details.add(new IconDetail("trash", "delete"));
         details.add(new IconDetail("pencil", "edit"));
@@ -187,19 +206,26 @@ public class NoteEndpoints {
     }
 
     private void makeNote(Context ctx) {
-        String safe = policy.sanitize(ctx.formParam("body"));
-        Node body = parser.parse(safe);
-        Note n = new Note(ctx.formParam("title"), safe, (getDb().getMaxID("notes")+1), ctx.formParam("color"), renderer.render(body));
-        if (n.getTitle().equals("")) {
-            n.setTitle(null);;
-        }
-        if (n.getColor().equals("")) {
-            n.setColor(null);
-        }
-        getDb().addNote(n);
+        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != -1) {
+            int userid = db.checkCookie(ctx.cookie("com.aschwartz.notes"));
+            String safe = policy.sanitize(ctx.formParam("body"));
+            Node body = parser.parse(safe);
+            Note n = new Note(ctx.formParam("title"), safe, (getDb().getMaxID("notes") + 1), ctx.formParam("color"), renderer.render(body), userid);
+            if (n.getTitle().equals("")) {
+                n.setTitle(null);
+                ;
+            }
+            if (n.getColor().equals("")) {
+                n.setColor(null);
+            }
+            getDb().addNote(n);
 
-        ctx.redirect("/index.html"); // redirect
-        System.out.println("created " + n.getId() + "...");
+            ctx.redirect("/index.html"); // redirect
+            System.out.println("created " + n.getId() + "...");
+        }
+        else {
+            ctx.redirect("/login");
+        }
     }
 
     public void setApp(Javalin app) {

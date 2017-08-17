@@ -1,6 +1,9 @@
+import org.apache.commons.lang.RandomStringUtils;
+
+import javax.xml.crypto.Data;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 public class Database {
     private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -14,41 +17,43 @@ public class Database {
         }
     }
 
-    public List<Note> getAllNotes() {
+    public List<Note> getAllNotes(int userid) {
         try {
-            return getNotes(conn.prepareStatement("SELECT * FROM Notes;" ));
+            return getNotes(conn.prepareStatement("SELECT * FROM Notes;" ), userid);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public List<Note> getArchivedNotes() {
-        return getNotesByArchived(true);
+    public List<Note> getArchivedNotes(int userid) {
+        return getNotesByArchived(true, userid);
     }
 
-    public List<Note> getActiveNotes() {
+    public List<Note> getActiveNotes(int userid) {
         /**
          * Returns all notes that are not archived
          */
-        return getNotesByArchived(false);
+        return getNotesByArchived(false, userid);
     }
 
-    private List<Note> getNotesByArchived(Boolean bool) {
+    private List<Note> getNotesByArchived(Boolean bool, int userid) {
         /**
          * gets archived / non-archived (active) notes, depending on bool
          */
         try {
-            PreparedStatement statement = conn.prepareStatement("select * from notes where archived = ? order by id desc;");
+            PreparedStatement statement = conn.prepareStatement("select * from notes where archived = ? and user_id = ? order by id desc;");
             statement.setBoolean(1, bool);
-            return getNotes(statement);
+            statement.setInt(2, userid);
+            return getNotes(statement, userid);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public List<Note> getNotes(PreparedStatement sql) {
+
+    public List<Note> getNotes(PreparedStatement sql, int userid) {
         List<Note> notes = new ArrayList<Note>();
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -59,7 +64,7 @@ public class Database {
                 String body = rs.getString("body");
                 String color = rs.getString("color");
                 String html = rs.getString("html");
-                notes.add(new Note(title, body, id, color, html));
+                notes.add(new Note(title, body, id, color, html, userid));
             }
             rs.close();
             // conn.close();
@@ -74,13 +79,14 @@ public class Database {
         PreparedStatement sql = null;
         try {
             sql = conn.prepareStatement(
-                    "INSERT into notes VALUES ( ? , ? , ? , ? , ?, ?, 100 )" ); // TODO remove hardcoded user param
+                    "INSERT into notes VALUES ( ? , ? , ? , ? , ?, ?, ? )" );
             sql.setInt(1, n.getId());
             sql.setString(2, n.getTitle());
             sql.setString(3, n.getBody());
             sql.setString(4, n.getColor());
             sql.setBoolean(5, n.getArchived());
             sql.setString(6, n.getHtml());
+            sql.setInt(7, n.getUserId());
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -135,7 +141,8 @@ public class Database {
                 int noteId = Integer.parseInt(rs.getString("id"));
                 String body = rs.getString("body");
                 String color = rs.getString("color");
-                return new Note(title, body, id, color);
+                int userid = rs.getInt("user_id");
+                return new Note(title, body, id, color, userid);
             }
             rs.close();
         } catch (SQLException e) {
@@ -228,5 +235,57 @@ public class Database {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String saveLogin(User u) {
+        PreparedStatement sql = null;
+        int id = getMaxID("logins")+1;
+        String random = RandomStringUtils.random(20, true, true);
+        String hashedusername = u.hashUsername();
+        try {
+            sql = conn.prepareStatement("INSERT into logins VALUES ( ? , ? , ? , ?, ? )" );
+            sql.setInt(1, id); // id
+            sql.setInt(2, u.getId()); // user_id
+            sql.setString(3, random); // random string
+            sql.setString(4, hashedusername); // hashed username
+            sql.setDate(5, new java.sql.Date(Calendar.getInstance().getTimeInMillis())); // date created TODO make this get date time, not just date
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return random+hashedusername;
+    }
+
+    public List<Login> getAllLogins() {
+        List<Login> logins = new ArrayList<>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("select * from logins;");
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                logins.add(new Login(rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("random"),
+                        rs.getString("name_hash"),
+                        rs.getDate("date_created")
+                ));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return logins;
+    }
+
+    public int checkCookie(String cookie) {
+        /**
+         * returns the id of the signed in user
+         * returns -1 if no user is signed in
+         */
+        for (Login l : getAllLogins()) {
+            if ((l.getRandom() + l.getNameHash()).equals(cookie)) { // TODO add check if cookie is over n days old, return false
+                return l.getUserId();
+            }
+        }
+        return -1;
     }
 }
