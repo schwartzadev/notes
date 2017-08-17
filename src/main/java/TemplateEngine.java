@@ -11,12 +11,13 @@ import java.util.Map;
 /**
  * Created by Andrew Schwartz on 8/13/17.
  */
-public class TemplateEngine { // todo add sign out link, message with username in corner
-    public String noteListHtml(List<Note> notes, List<IconDetail> iconDetails) {
+public class TemplateEngine {
+    public String noteListHtml(List<Note> notes, List<IconDetail> iconDetails, User u) {
         Configuration cfg = new Configuration();
         Map<String, Object> root = new HashMap<>();
         root.put("notes", notes);
         root.put("iconlist", iconDetails);
+        root.put("user", u);
         Writer out = new StringWriter();
         freemarker.template.Template temp = null;
         try {

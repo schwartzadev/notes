@@ -13,6 +13,9 @@
 	background-color: green;
 	position: relative;
 	padding-bottom: 3em;
+	-webkit-box-shadow: 1px 1px 11px 0px rgba(173,173,173,1);
+    -moz-box-shadow: 1px 1px 11px 0px rgba(173,173,173,1);
+    box-shadow: 1px 1px 11px 0px rgba(173,173,173,1);
 }
 
 .note > * {
@@ -133,4 +136,43 @@ textarea {
 
 footer {
     text-align: center;
+}
+
+
+.login {
+    width: 60vw;
+    background-color: #D8D8D8;
+    margin: 0 auto;
+    text-align: center;
+-webkit-box-shadow: 3px 3px 19px 0px rgba(173,173,173,1);
+-moz-box-shadow: 3px 3px 19px 0px rgba(173,173,173,1);
+box-shadow: 3px 3px 19px 0px rgba(173,173,173,1);
+}
+
+.login input[type=text],
+.login input[type=password] {
+    width: 85%;
+    padding: 1em 1.5em;
+    margin: .5em 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+}
+
+.login label {
+    font-family: sans-serif;
+    font-size: 1.2em;
+}
+
+.login input[type=checkbox] {
+    margin: .5em 0;
+}
+
+.login button {
+    background-color: #70d5d8;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 75%;
 }

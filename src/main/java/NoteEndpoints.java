@@ -45,6 +45,12 @@ public class NoteEndpoints {
         getApp().get("/login", this::loginPage);
         getApp().post("/sign-in", this::loginHandler);
         getApp().get("/", this::rootRedirect);
+        getApp().get("/logout", this::logOut);
+    }
+
+    private void logOut(Context context) {
+        context.removeCookie("com.aschwartz.notes");
+        context.redirect("/login");
     }
 
     // todo add logout endpoint (delete cookie)
@@ -184,25 +190,24 @@ public class NoteEndpoints {
         /**
          * template for index and archived pages
          */
-        ctx.html(te.noteListHtml(notes, iconDetails));
+        ctx.html(te.noteListHtml(notes, iconDetails, db.getUserByID(db.checkCookie(ctx.cookie("com.aschwartz.notes")))));
     }
 
     private void index(Context ctx) {
         // check for login cookie
         String cookie = ctx.cookie("com.aschwartz.notes");
         int loggedInUser = 0;
-        if (cookie != null) { // only check cookie if it exists
+        if (cookie != null && (loggedInUser==(-1) || loggedInUser==0)) { // only check cookie if it exists
             loggedInUser = db.checkCookie(cookie);
             System.out.println(loggedInUser + " is logged in");
-        } if (loggedInUser==(-1) || loggedInUser==0) {
+            List<Note> dbNotes = getDb().getActiveNotes(loggedInUser);
+            List<IconDetail> details = new ArrayList<>();
+            details.add(new IconDetail("trash", "delete"));
+            details.add(new IconDetail("pencil", "edit"));
+            notePage(ctx, dbNotes, details);
+        } else {
             ctx.redirect("/login");
         }
-
-        List<Note> dbNotes = getDb().getActiveNotes(loggedInUser);
-        List<IconDetail> details = new ArrayList<>();
-        details.add(new IconDetail("trash", "delete"));
-        details.add(new IconDetail("pencil", "edit"));
-        notePage(ctx, dbNotes, details);
     }
 
     private void makeNote(Context ctx) {

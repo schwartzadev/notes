@@ -150,6 +150,22 @@ public class Database {
         }
         return null; // if try fails
     }
+    public User getUserByID(int id) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement(
+                    "select * from users where id=?;" );
+            sql.setInt(1, id);
+            ResultSet rs = sql.executeQuery();
+            while (rs.next()) {
+                return new User(rs.getInt("id"), rs.getBoolean("isactive"), rs.getString("username"), rs.getString("password"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // if try fails
+    }
 
     public void setNoteColor(Note n, String color) {
         try {
