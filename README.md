@@ -37,20 +37,15 @@ CREATE TABLE `logins` (
 )
 ```
 
-### Java Config
-You will also have to make a `DefaultConfig.java` file to hold your MySQL credentials. It should look like this:
-```java
-public class DefaultConfig implements Config {
-    public String getSqlUsername() {
-        return "myusername";
-    }
-    public String getSqlPassword() {
-        return "mycasesensitivepass";
-    }
-
-    public String getDbUrl() {
-        return "jdbc:mysql://localhost/NOTES?useSSL=true"; // or whatever you named your my SQL database
-    }
+### Config
+You will also have to make a `config.json` file to hold your SQL information. It should look like this:
+```json
+{
+  "SQL" : {
+    "username" : "myname",
+    "password" : "mypass",
+    "url" : "jdbc:mysql://localhost/etcetcetc"
+  }
 }
 ```
 
