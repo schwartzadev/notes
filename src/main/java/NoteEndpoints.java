@@ -49,6 +49,7 @@ public class NoteEndpoints {
     }
 
     private void logOut(Context context) {
+        db.deleteLogin(db.checkCookie(context.cookie("com.aschwartz.notes")));
         context.removeCookie("com.aschwartz.notes");
         context.redirect("/login");
     }
@@ -90,8 +91,8 @@ public class NoteEndpoints {
     }
 
     private void archived(Context ctx) {
-        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != -1) {
-            List<Note> notes = getDb().getArchivedNotes(db.checkCookie(ctx.cookie("com.aschwartz.notes")));
+        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != null) {
+            List<Note> notes = getDb().getArchivedNotes(db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId());
             List<IconDetail> details = new ArrayList<>();
             details.add(new IconDetail("pencil", "edit"));
             details.add(new IconDetail("undo", "restore"));
@@ -155,8 +156,8 @@ public class NoteEndpoints {
     }
 
     private void updateNote(Context ctx) {
-        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != -1) {
-            int userid = db.checkCookie(ctx.cookie("com.aschwartz.notes"));
+        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != null) {
+            int userid = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
             String safe = policy.sanitize((ctx.formParam("body")));
             Node body = parser.parse(safe);
             int id = -1;
@@ -188,15 +189,16 @@ public class NoteEndpoints {
         /**
          * template for index and archived pages
          */
-        ctx.html(te.noteListHtml(notes, iconDetails, db.getUserByID(db.checkCookie(ctx.cookie("com.aschwartz.notes")))));
+        ctx.html(te.noteListHtml(notes, iconDetails, db.getUserByID(db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId())));
     }
 
     private void index(Context ctx) {
         // check for login cookie
         String cookie = ctx.cookie("com.aschwartz.notes");
         int loggedInUser = 0;
-        if (cookie != null && (loggedInUser==(-1) || loggedInUser==0)) { // only check cookie if it exists
-            loggedInUser = db.checkCookie(cookie);
+//        if (cookie != null && (loggedInUser==(-1) || loggedInUser==0)) { // only check cookie if it exists
+        if (cookie != null) { // only check cookie if it exists
+            loggedInUser = db.checkCookie(cookie).getUserId();
             System.out.println(loggedInUser + " is logged in");
             List<Note> dbNotes = getDb().getActiveNotes(loggedInUser);
             List<IconDetail> details = new ArrayList<>();
@@ -209,8 +211,8 @@ public class NoteEndpoints {
     }
 
     private void makeNote(Context ctx) {
-        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != -1) {
-            int userid = db.checkCookie(ctx.cookie("com.aschwartz.notes"));
+        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != null) {
+            int userid = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
             String safe = policy.sanitize(ctx.formParam("body"));
             Node body = parser.parse(safe);
             Note n = new Note(ctx.formParam("title"), safe, (getDb().getMaxID("notes") + 1), ctx.formParam("color"), renderer.render(body), userid);

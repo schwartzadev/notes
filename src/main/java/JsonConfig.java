@@ -1,10 +1,6 @@
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -12,7 +8,7 @@ import java.nio.file.Paths;
  * Created by Andrew Schwartz on 8/16/17.
  */
 public class JsonConfig implements Config {
-    JSONObject config;
+    private JSONObject config;
     public JsonConfig() {
         String content = null;
         try {

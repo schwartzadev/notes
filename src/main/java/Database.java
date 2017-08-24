@@ -94,10 +94,22 @@ public class Database {
     }
 
     public void deleteNote(int id) {
+        deleteDbOject(id, "notes");
+    }
+
+    public void deleteLogin(int id) {
+        deleteDbOject(id, "logins");
+    }
+
+    public void deleteLogin(Login l) {
+        deleteDbOject(l.getId(), "logins");
+    }
+
+    private void deleteDbOject(int id, String tbl) {
         PreparedStatement sql = null;
         try {
             sql = conn.prepareStatement(
-                    "delete from notes WHERE id = ? ;" );
+                    "DELETE from " + tbl + " WHERE id = ? ;" );
             sql.setInt(1, id);
             Database.executeQuery(sql);
         } catch (SQLException e) {
@@ -292,16 +304,16 @@ public class Database {
         return logins;
     }
 
-    public int checkCookie(String cookie) {
+    public Login checkCookie(String cookie) {
         /**
          * returns the id of the signed in user
          * returns -1 if no user is signed in
          */
         for (Login l : getAllLogins()) {
             if ((l.getRandom() + l.getNameHash()).equals(cookie)) { // TODO add check if cookie is over n days old, return false
-                return l.getUserId();
+                return l;
             }
         }
-        return -1;
+        return null;
     }
 }

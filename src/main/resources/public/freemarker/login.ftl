@@ -16,3 +16,7 @@
         <input type="checkbox" checked="checked" name="remember"> Remember me
     </form>
 </div>
+<br>
+<div class="center">
+    <a class="loginprompt" href="/register">Don't have an account?</a>
+</div>
