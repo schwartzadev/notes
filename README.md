@@ -44,7 +44,7 @@ You will also have to make a `config.json` file to hold your SQL information. It
   "SQL" : {
     "username" : "myname",
     "password" : "mypass",
-    "url" : "jdbc:mysql://localhost/etcetcetc"
+    "url" : "jdbc:mysql://localhost/NOTES?etcetcetc"
   }
 }
 ```
