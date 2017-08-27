@@ -1,5 +1,7 @@
 import io.javalin.Context;
 import io.javalin.Javalin;
+import org.commonmark.Extension;
+import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -8,6 +10,7 @@ import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,8 +19,9 @@ import java.util.List;
 public class NoteEndpoints {
     private Javalin app;
     private Database db;
-    private Parser parser = Parser.builder().build();
-    private HtmlRenderer renderer = HtmlRenderer.builder().build();
+    private List<Extension> extensions = Arrays.asList(StrikethroughExtension.create());
+    private Parser parser = Parser.builder().extensions(extensions).build();
+    private HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).build();
     private PolicyFactory policy = Sanitizers.FORMATTING.and(Sanitizers.FORMATTING);
     private TemplateEngine te = new TemplateEngine();
 
