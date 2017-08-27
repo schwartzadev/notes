@@ -8,13 +8,14 @@ You will need to install MySQL to use this project.
 1. Make a Notes database: `create database notes;`
 2. Add the notes table with schema:
 ```sql
-CREATE TABLE `notes` (
-  `id` int NOT NULL,
+ CREATE TABLE `notes` (
+  `id` int(11) NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `body` varchar(2000) DEFAULT NULL,
   `color` varchar(6) DEFAULT NULL,
   `archived` tinyint(1) DEFAULT '0',
-  `html` varchar(2000) DEFAULT NULL
+  `html` varchar(2000) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL
 )
 ```
 3. Add the users table like so:
