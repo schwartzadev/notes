@@ -100,6 +100,11 @@ div.hastitle ul li {
 }*/
 
 /*MODAL (POPUP) STYLES*/
+
+#popupTrigger {
+    cursor: pointer;
+}
+
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -139,7 +144,7 @@ div.hastitle ul li {
 }
 
 .close {
-    color: white;
+    color: #333;
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -152,14 +157,18 @@ div.hastitle ul li {
     cursor: pointer;
 }
 
-.modal-header {
-    padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
+.modal-header * {
+    margin: 0;
 }
 
-.modal-body {
+.modal-body,
+.modal-header {
     padding: 2px 8px;
+}
+
+.modal-body label {
+    font-size: 1.8em;
+    font-weight: 400;
 }
 
 button {
@@ -174,16 +183,54 @@ textarea {
   display: block;
   margin: 0;
   width: 100%;
-  line-height: 2.2em;
   font-size: 2em;
   border: 1px solid #bbb;
 }
 
 input[type=text],
 input[type=password] {
-  height: 2.2em;
+  height: 2em;
 }
 
 textarea {
     font-family: sans-serif;
+}
+
+input#colorchoice {
+    width: 25%;
+    font-size: 1.5em;
+}
+
+.inline {
+    display: inline;
+}
+
+.colorButtons input[type="button"] {
+    border: none;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 5px;
+}
+
+/* NAV */
+
+.topnav {
+    background-color: #eeeeee;
+    overflow: hidden;
+    margin-bottom: 1em;
+}
+
+.topnav a {
+    float: left;
+    display: block;
+    color: #222222;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
 }
