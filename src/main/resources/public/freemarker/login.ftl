@@ -9,14 +9,26 @@
         <br>
         <label><b>Password</b></label>
         <br>
-        <input type="password" placeholder="Enter Password" name="pwd" required>
-        <br>
+        <input id="passInput" type="password" placeholder="Enter Password" name="pwd" required style="float: left;">
+        <input type="checkbox" id="showPass" onclick="togglePass()">
+        <label> Show Password</label>
+        <div style="clear:both;">&nbsp;</div>
         <button type="submit">Let's go</button>
         <br>
-        <input type="checkbox" checked="checked" name="remember"> Remember me
+        <input type="checkbox" checked="checked" name="remember"><label> Remember me</label>
     </form>
 </div>
 <br>
 <div class="center">
     <a class="loginprompt" href="/register">Don't have an account?</a>
 </div>
+<script>
+function togglePass() {
+    var box = document.getElementById('showPass');
+    if (box.checked) {
+        document.getElementById('passInput').type = 'text';
+    } else {
+        document.getElementById('passInput').type = 'password';
+    }
+}
+</script>

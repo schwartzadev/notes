@@ -83,22 +83,9 @@ div.hastitle ul li {
     margin-left: .5em;
 }
 
-/*@media (min-width: 768px) {
-    .container {
-        display: flex;
-        flex-flow: row wrap;
-        flex-grow: 1;
-    }
-
-    .note {
-        margin-left: 1em;
-    }
-
-    .note:first-child {
-        margin-left: .5em;
-    }
-}*/
-
+#passInput {
+    width: 75%;
+}
 /*MODAL (POPUP) STYLES*/
 
 #popupTrigger {
