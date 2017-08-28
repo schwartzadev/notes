@@ -120,7 +120,7 @@ public class NoteEndpoints {
     }
 
     private void deleteNote(Context ctx) {
-        System.out.println(("deleting " + ctx.param("id")) + "...");
+        System.out.println("[" + ctx.ip() + "] deleting " + ctx.param("id") + "...");
         try {
             ctx.redirect("/index.html"); // redirect
             getDb().archiveNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
