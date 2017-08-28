@@ -1,5 +1,7 @@
 import io.javalin.Context;
 import io.javalin.Javalin;
+import org.commonmark.Extension;
+import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -8,6 +10,7 @@ import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,8 +19,9 @@ import java.util.List;
 public class NoteEndpoints {
     private Javalin app;
     private Database db;
-    private Parser parser = Parser.builder().build();
-    private HtmlRenderer renderer = HtmlRenderer.builder().build();
+    private List<Extension> extensions = Arrays.asList(StrikethroughExtension.create());
+    private Parser parser = Parser.builder().extensions(extensions).build();
+    private HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).build();
     private PolicyFactory policy = Sanitizers.FORMATTING.and(Sanitizers.FORMATTING);
     private TemplateEngine te = new TemplateEngine();
 
@@ -104,7 +108,7 @@ public class NoteEndpoints {
     }
 
     private void restore(Context ctx) {
-        System.out.println("restoring " + ctx.param("id") + "...");
+        System.out.println("[" + ctx.ip() + "] restoring " + ctx.param("id") + "...");
         try {
             ctx.redirect("/index.html"); // redirect
             getDb().restoreNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
@@ -116,7 +120,7 @@ public class NoteEndpoints {
     }
 
     private void deleteNote(Context ctx) {
-        System.out.println(("deleting " + ctx.param("id")) + "...");
+        System.out.println("[" + ctx.ip() + "] deleting " + ctx.param("id") + "...");
         try {
             ctx.redirect("/index.html"); // redirect
             getDb().archiveNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
@@ -129,7 +133,7 @@ public class NoteEndpoints {
 
     private void editNote(Context ctx) {
         StringBuilder sb = new StringBuilder();
-        System.out.println(("editing " + ctx.param("id")) + "...");
+        System.out.println(("[" + ctx.ip() + "] editing " + ctx.param("id")) + "...");
         int id = -1;
         try {
             id = Integer.parseInt(ctx.param("id")); // can throw nfe
@@ -164,7 +168,7 @@ public class NoteEndpoints {
             try {
                 id = Integer.parseInt(ctx.formParam("id")); // can throw nfe
             } catch (NumberFormatException nfe) {
-                System.out.println("***update " + id + " failed");
+                System.out.println("[" + ctx.ip() + "] ***update " + id + " failed");
             }
 
             Note n = new Note(ctx.formParam("title"), safe, id, ctx.formParam("color"), renderer.render(body), userid);
@@ -178,7 +182,7 @@ public class NoteEndpoints {
             getDb().addNote(n);
 
             ctx.redirect("/index.html"); // redirect
-            System.out.println("created " + n.getId() + "...");
+            System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
         }
         else {
             ctx.redirect("/login");
@@ -199,7 +203,7 @@ public class NoteEndpoints {
 //        if (cookie != null && (loggedInUser==(-1) || loggedInUser==0)) { // only check cookie if it exists
         if (cookie != null) { // only check cookie if it exists
             loggedInUser = db.checkCookie(cookie).getUserId();
-            System.out.println(loggedInUser + " is logged in");
+            System.out.println("[" + ctx.ip() + "] " + loggedInUser + " is logged in");
             List<Note> dbNotes = getDb().getActiveNotes(loggedInUser);
             List<IconDetail> details = new ArrayList<>();
             details.add(new IconDetail("trash", "delete"));
@@ -226,7 +230,7 @@ public class NoteEndpoints {
             getDb().addNote(n);
 
             ctx.redirect("/index.html"); // redirect
-            System.out.println("created " + n.getId() + "...");
+            System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
         }
         else {
             ctx.redirect("/login");

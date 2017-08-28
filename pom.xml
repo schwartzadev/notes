@@ -41,6 +41,12 @@
             <artifactId>commonmark</artifactId>
             <version>0.9.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.atlassian.commonmark/commonmark-ext-gfm-strikethrough -->
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-strikethrough</artifactId>
+            <version>0.9.0</version>
+        </dependency>
         <dependency>
             <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
             <artifactId>owasp-java-html-sanitizer</artifactId>
