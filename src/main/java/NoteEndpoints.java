@@ -108,7 +108,7 @@ public class NoteEndpoints {
     }
 
     private void restore(Context ctx) {
-        System.out.println("restoring " + ctx.param("id") + "...");
+        System.out.println("[" + ctx.ip() + "] restoring " + ctx.param("id") + "...");
         try {
             ctx.redirect("/index.html"); // redirect
             getDb().restoreNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
@@ -133,7 +133,7 @@ public class NoteEndpoints {
 
     private void editNote(Context ctx) {
         StringBuilder sb = new StringBuilder();
-        System.out.println(("editing " + ctx.param("id")) + "...");
+        System.out.println(("[" + ctx.ip() + "] editing " + ctx.param("id")) + "...");
         int id = -1;
         try {
             id = Integer.parseInt(ctx.param("id")); // can throw nfe
@@ -168,7 +168,7 @@ public class NoteEndpoints {
             try {
                 id = Integer.parseInt(ctx.formParam("id")); // can throw nfe
             } catch (NumberFormatException nfe) {
-                System.out.println("***update " + id + " failed");
+                System.out.println("[" + ctx.ip() + "] ***update " + id + " failed");
             }
 
             Note n = new Note(ctx.formParam("title"), safe, id, ctx.formParam("color"), renderer.render(body), userid);
@@ -182,7 +182,7 @@ public class NoteEndpoints {
             getDb().addNote(n);
 
             ctx.redirect("/index.html"); // redirect
-            System.out.println("created " + n.getId() + "...");
+            System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
         }
         else {
             ctx.redirect("/login");
@@ -203,7 +203,7 @@ public class NoteEndpoints {
 //        if (cookie != null && (loggedInUser==(-1) || loggedInUser==0)) { // only check cookie if it exists
         if (cookie != null) { // only check cookie if it exists
             loggedInUser = db.checkCookie(cookie).getUserId();
-            System.out.println(loggedInUser + " is logged in");
+            System.out.println("[" + ctx.ip() + "] " + loggedInUser + " is logged in");
             List<Note> dbNotes = getDb().getActiveNotes(loggedInUser);
             List<IconDetail> details = new ArrayList<>();
             details.add(new IconDetail("trash", "delete"));
@@ -230,7 +230,7 @@ public class NoteEndpoints {
             getDb().addNote(n);
 
             ctx.redirect("/index.html"); // redirect
-            System.out.println("created " + n.getId() + "...");
+            System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
         }
         else {
             ctx.redirect("/login");
