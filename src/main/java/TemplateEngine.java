@@ -21,7 +21,7 @@ public class TemplateEngine {
         Writer out = new StringWriter();
         freemarker.template.Template temp = null;
         try {
-            temp = cfg.getTemplate("src/main/resources/public/freemarker/notes.ftl");
+            temp = cfg.getTemplate("src/main/resources/private/freemarker/notes.ftl");
             temp.process(root, out);
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
@@ -38,7 +38,7 @@ public class TemplateEngine {
         Writer out = new StringWriter();
         freemarker.template.Template temp = null;
         try {
-            temp = cfg.getTemplate("src/main/resources/public/freemarker/register.ftl");
+            temp = cfg.getTemplate("src/main/resources/private/freemarker/register.ftl");
             temp.process(root, out);
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
@@ -79,7 +79,7 @@ public class TemplateEngine {
     }
 
     public String loginPage() {
-        return genericPage("src/main/resources/public/freemarker/login.ftl");
+        return genericPage("src/main/resources/private/freemarker/login.ftl");
     }
 
     public String editPage(Note n) {
