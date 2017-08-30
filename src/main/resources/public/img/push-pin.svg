@@ -27,9 +27,9 @@
      inkscape:window-height="811"
      id="namedview7"
      showgrid="false"
-     inkscape:zoom="6.8124998"
-     inkscape:cx="3.8586632"
-     inkscape:cy="26.322718"
+     inkscape:zoom="5.1093749"
+     inkscape:cx="25.014714"
+     inkscape:cy="15.984506"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -49,8 +49,8 @@
     </rdf:RDF>
   </metadata>
   <path
-     style="opacity:1;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.75794983;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 11.41971,1.6604753 5.551963,5.3058801 0,16.2391136 c 0,0 -3.141187,0.355045 -3.141187,2.033207 l 20.339304,0 c 0,-1.532524 -3.140584,-2.033207 -3.140584,-2.033207 l 0,-16.2391136 5.551359,-5.3058801 z m 11.495288,23.7488907 0,13.825926 1.08514,3.392697 0.825653,-3.392697 0,-13.825926 z"
+     style="opacity:1;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.00000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 11.419575,2.1704841 c 0,0.3669725 5.551963,5.3058801 5.551963,5.3058801 l 0,16.2391138 c 0,0 -3.141187,0.355045 -3.141187,2.033207 l 20.339304,0 c 0,-1.532524 -3.140584,-2.033207 -3.140584,-2.033207 l 0,-16.2391138 c 0,0 5.551359,-4.8655131 5.551359,-5.3058801 z m 11.495288,23.7488909 0,13.825926 1.08514,3.392697 0.825653,-3.392697 0,-13.825926 z"
      id="path3843"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="ccccccccccccccc" />
