@@ -132,7 +132,6 @@ public class NoteEndpoints {
     }
 
     private void editNote(Context ctx) {
-        StringBuilder sb = new StringBuilder();
         System.out.println(("[" + ctx.ip() + "] editing " + ctx.param("id")) + "...");
         int id = -1;
         try {
@@ -141,22 +140,7 @@ public class NoteEndpoints {
             ctx.html("invalid request. Specify a note id to edit.<br><a href=\"/index.html\">return to home</a>");
         }
         Note n = getDb().getNoteByID(id);
-        sb.append("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"/styles.css\"></head>\n<form id=\"note-factory\" method=\"post\" action=\"/update-note\">" +
-                "            <label for=\"title\">Title:</label>\n");
-        if (n.getTitle() != null) {
-            sb.append("<input name=\"title\" id=\"title\" type=\"text\" value=\"" + n.getTitle() + "\">\n");
-        }
-        else {
-            sb.append("<input name=\"title\" id=\"title\" type=\"text\">\n");
-        }
-        sb.append("<label for=\"textarea\" style=\"height: 50vh\">Body *</label>\n" +
-                "            <textarea id=\"textarea\" rows=\"20\" name=\"body\" value=\"" + n.getBody() +  "\" required>" + n.getBody() + "</textarea>" +
-                "            <label class=\"colorText\" for=\"colorchoice\">Custom hex color:</label>\n" +
-                "            <input type=\"text\" name=\"color\" id=\"colorchoice\" maxlength=\"6\" value=\"" + n.getColor() + "\">" +
-                "            <input type=\"hidden\" name=\"id\" value=\"" + n.getId() + "\">\n" +
-                "<button class=\"submit\" >Submit</button>" +
-                "</form>");
-        ctx.html(sb.toString());
+        ctx.html(te.editPage(n));
     }
 
     private void updateNote(Context ctx) {

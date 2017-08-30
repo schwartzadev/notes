@@ -47,18 +47,42 @@ public class TemplateEngine {
         return out.toString();
     }
 
-    public String loginPage() {
+    public String genericPage(String fileUrl) {
         Configuration cfg = new Configuration();
         Map<String, Object> root = new HashMap<>();
         Writer out = new StringWriter();
         freemarker.template.Template temp = null;
         try {
-            temp = cfg.getTemplate("src/main/resources/public/freemarker/login.ftl");
+            temp = cfg.getTemplate(fileUrl);
             temp.process(root, out);
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
         }
         StringBuilder sb = new StringBuilder();
         return out.toString();
+    }
+
+    public String genericPage(String fileUrl, Note note) {
+        Configuration cfg = new Configuration();
+        Map<String, Object> root = new HashMap<>();
+        root.put("n", note);
+        Writer out = new StringWriter();
+        freemarker.template.Template temp = null;
+        try {
+            temp = cfg.getTemplate(fileUrl);
+            temp.process(root, out);
+        } catch (IOException | TemplateException e) {
+            e.printStackTrace();
+        }
+        StringBuilder sb = new StringBuilder();
+        return out.toString();
+    }
+
+    public String loginPage() {
+        return genericPage("src/main/resources/public/freemarker/login.ftl");
+    }
+
+    public String editPage(Note n) {
+        return genericPage("src/main/resources/private/freemarker/edit.ftl", n);
     }
 }
