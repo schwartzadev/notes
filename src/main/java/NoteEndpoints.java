@@ -208,6 +208,7 @@ public class NoteEndpoints {
             List<IconDetail> details = new ArrayList<>();
             details.add(new IconDetail("trash", "delete"));
             details.add(new IconDetail("pencil", "edit"));
+            details.add(new IconDetail("push-pin", "pin"));
             notePage(ctx, dbNotes, details);
         } else {
             ctx.redirect("/login");

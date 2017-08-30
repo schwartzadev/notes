@@ -1,6 +1,6 @@
 <head><link rel="stylesheet" type="text/css" href="/styles.css"></head>
 <div class="topnav">
-    <b><a id="popupTrigger">Add note</a></b>
+    <b><a id="popupTrigger"><img src="./img/plus.svg" id="add-note-img"></a></b>
     <a href="index.html">View notes</a>
     <a href="archived.html">View archived notes</a>
     <a href="/logout" style="float:right;">Sign Out (${user.getUsername()})</a>
@@ -19,7 +19,7 @@
                     <input name="title" id="title" type="text">
                 </div>
                 <div>
-                    <label for="textarea">Body *</label>
+                    <label for="textarea">Body: *</label>
                     <textarea id="textarea" name="body" rows="3" required></textarea>
                 </div>
                 <hr>

@@ -92,6 +92,10 @@ div.hastitle ul li {
     cursor: pointer;
 }
 
+#add-note-img {
+    height: 45px;
+}
+
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -214,7 +218,8 @@ input#colorchoice {
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-    font-size: 17px;
+    font-size: 24px;
+    line-height: 45px;
 }
 
 .topnav a:hover {
