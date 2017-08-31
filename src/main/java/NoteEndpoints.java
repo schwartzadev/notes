@@ -121,12 +121,15 @@ public class NoteEndpoints {
 
     private void deleteNote(Context ctx) {
         System.out.println("[" + ctx.ip() + "] deleting " + ctx.param("id") + "...");
+        // todo authenticate here, check that note id belongs to logged in user
         try {
-            ctx.redirect("/index.html"); // redirect
             getDb().archiveNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
+            ctx.status(201);
         } catch (NumberFormatException nfe) {
+            ctx.status(500);
             ctx.html("invalid request. Specify a note id to delete.<br><a href=\"/index.html\">return to home</a>");
         } catch (Exception e) {
+            ctx.status(500);
             e.printStackTrace();
         }
     }

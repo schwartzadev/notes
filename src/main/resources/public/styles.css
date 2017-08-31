@@ -1,17 +1,13 @@
 .container {
-    padding: 0 1em;
+    /*padding: 0 1em;*/
 }
 
 @media only screen and (min-width: 768px) {
     .container {
         flex-flow: row wrap;
-        display: -webkit-flex;
         display: flex;
-        -webkit-flex-direction: row /* works with row or column */
         flex-direction: row;
-        -webkit-align-items: center;
         align-items: center;
-        -webkit-justify-content: center;
         justify-content: center;
 	}
 
@@ -103,6 +99,7 @@ div.hastitle ul li {
 
 .toolbar a  {
     margin-left: 1em;
+    cursor: pointer;
 }
 
 .toolbar a:first-child {

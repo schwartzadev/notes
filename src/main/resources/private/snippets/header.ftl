@@ -1,4 +1,11 @@
-<head><link rel="stylesheet" type="text/css" href="/styles.css"></head>
+<head>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous">
+    </script>
+</head>
 <div class="topnav">
     <b><a id="popupTrigger"><img src="./img/plus.svg" id="add-note-img"></a></b>
     <a href="index.html">View notes</a>

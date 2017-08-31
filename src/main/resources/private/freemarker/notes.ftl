@@ -1,6 +1,21 @@
 <#include "*/snippets/header.ftl">
 <#include "*/snippets/index.html">
 <h1 class="pagetitle">all notes</h1>
+<script>
+function deleteMe(id) {
+	var url = 'delete/' + id;
+	$.ajax({
+		url: url,
+		success: function(result) {
+			console.log('deleted ' + id);
+			$('#' + id).hide(120);
+		},
+		error: function() {
+            alert("an error occurred while trying to delete a note");
+        }
+	});
+}
+</script>
 <div class="container">
     <#list notes as note>
         <div class="note" id="${note.getId()}" style="background-color:${note.getColor()};">
@@ -16,9 +31,12 @@
                 <#list iconlist as pair>
                     <#--<#if pair.getEndpointName() = "edit">-->
                         <!--<a id="edit-trigger-${note.getId()}" href="${pair.getEndpointName()}/${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>-->
-                    <#--<#else>-->
+                    <#if pair.getEndpointName() = "delete">
+                        <!--<a href="${pair.getEndpointName()}/${note.id}" onclick="deleteMe(this, ${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>-->
+                        <a onclick="deleteMe(${note.id})"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
+                    <#else>
                     <a href="${pair.getEndpointName()}/${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
-                    <#--</#if>-->
+                    </#if>
                 </#list>
             </div>
         </div>
