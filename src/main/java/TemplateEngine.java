@@ -28,7 +28,6 @@ public class TemplateEngine {
         }
 
         StringBuilder sb = new StringBuilder();
-//        System.out.println("checking notes...");
         return out.toString();
     }
 

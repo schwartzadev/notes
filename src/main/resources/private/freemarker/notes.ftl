@@ -14,7 +14,11 @@
             </#if>
             <div class="toolbar">
                 <#list iconlist as pair>
-                <a href="${pair.getEndpointName()}/${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
+                    <#--<#if pair.getEndpointName() = "edit">-->
+                        <!--<a id="edit-trigger-${note.getId()}" href="${pair.getEndpointName()}/${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>-->
+                    <#--<#else>-->
+                    <a href="${pair.getEndpointName()}/${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
+                    <#--</#if>-->
                 </#list>
             </div>
         </div>
