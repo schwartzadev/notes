@@ -2,6 +2,25 @@
     padding: 0 1em;
 }
 
+@media only screen and (min-width: 768px) {
+    .container {
+        flex-flow: row wrap;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: row /* works with row or column */
+        flex-direction: row;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+	}
+
+	.note {
+        padding: 10px 10px 3.3em;
+        margin: 10px 10px 3.3em;
+	}
+}
+
 
 footer {
     font-size: 14px;
@@ -12,7 +31,7 @@ footer {
 	border-radius: 3px;
 	position: relative;
 	padding-bottom: 3.3em;
-	margin-bottom: 3.5em;
+    margin-bottom: 3.5em;
 	-webkit-box-shadow: 1px 1px 11px 0px rgba(173,173,173,1);
     -moz-box-shadow: 1px 1px 11px 0px rgba(173,173,173,1);
     box-shadow: 1px 1px 11px 0px rgba(173,173,173,1);
@@ -20,6 +39,7 @@ footer {
 
 .note h2.title {
     padding-left: .8em;
+    padding-right: .8em;
     padding-top: .4em;
     text-align: center;
 }
