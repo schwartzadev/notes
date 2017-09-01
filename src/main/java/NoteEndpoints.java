@@ -53,6 +53,7 @@ public class NoteEndpoints {
     }
 
     private void logOut(Context context) {
+        context.status(202);
         db.deleteLogin(db.checkCookie(context.cookie("com.aschwartz.notes")));
         context.removeCookie("com.aschwartz.notes");
         context.redirect("/login");
@@ -60,6 +61,7 @@ public class NoteEndpoints {
 
     private void loginPage(Context ctx) {
         ctx.html(te.loginPage());
+        ctx.status(200);
     }
 
     private void loginHandler(Context ctx) {
@@ -68,17 +70,19 @@ public class NoteEndpoints {
         if (BCrypt.checkpw(ctx.formParam("pwd"), user.getPassword())) {
 //            correct password
             ctx.html("correct pass");
-            String cookiecontent = db.saveLogin(user);
-            ctx.cookie("com.aschwartz.notes", cookiecontent);
+            ctx.cookie("com.aschwartz.notes", db.saveLogin(user));
             ctx.redirect("/index.html");
+            ctx.status(200);
         }
         else {
+            ctx.status(401);
             ctx.redirect("/login");
         }
     }
 
     private void registerPage(Context ctx) {
         ctx.html(te.registerPage());
+        ctx.status(200);
     }
 
     private void registerHandler(Context ctx) {
@@ -87,10 +91,12 @@ public class NoteEndpoints {
             remmber = true;
         }
         db.addUser(new User(db.getMaxID("users")+1, remmber, ctx.formParam("username"), ctx.formParam("pwd")));
+        ctx.status(200);
         ctx.redirect("/login");
     }
 
     private void rootRedirect(Context ctx) {
+        ctx.status(200);
         ctx.redirect("/index.html");
     }
 
@@ -100,19 +106,24 @@ public class NoteEndpoints {
             List<IconDetail> details = new ArrayList<>();
             details.add(new IconDetail("pencil", "edit"));
             details.add(new IconDetail("undo", "restore"));
-            notePage(ctx, notes, details);
+            notePage(ctx, notes, details); // todo don't pass ctx, instead set ctx.html to method call of notePage
+            ctx.status(200);
         }
         else {
+            ctx.status(401);
             ctx.redirect("/login");
         }
     }
 
     private void restore(Context ctx) {
-        System.out.println("[" + ctx.ip() + "] restoring " + ctx.param("id") + "...");
+        int id = Integer.parseInt(ctx.param("id"));
+        System.out.println("[" + ctx.ip() + "] restoring " + id + "...");
         try {
+            ctx.status(200);
             ctx.redirect("/index.html"); // redirect
-            getDb().restoreNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
+            getDb().restoreNote(id); // can throw nfe
         } catch (NumberFormatException nfe) {
+            ctx.status(400);
             ctx.html("invalid request. Specify a note id to restore.<br><a href=\"/index.html\">return to home</a>");
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,6 +178,7 @@ public class NoteEndpoints {
                 ctx.status(403);
             }
             Note n = getDb().getNoteByID(id);
+            ctx.status(200);
             ctx.html(te.editPage(n));
         }
     }
@@ -192,11 +204,12 @@ public class NoteEndpoints {
             }
             getDb().deleteNote(id);
             getDb().addNote(n);
-
+            ctx.status(200);
             ctx.redirect("/index.html"); // redirect
             System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
         }
         else {
+            ctx.status(401);
             ctx.redirect("/login");
         }
     }
@@ -222,6 +235,7 @@ public class NoteEndpoints {
             details.add(new IconDetail("push-pin", "pin"));
             notePage(ctx, dbNotes, details);
         } else {
+
             ctx.redirect("/login");
         }
     }
@@ -241,10 +255,12 @@ public class NoteEndpoints {
             }
             getDb().addNote(n);
 
+            ctx.status(200);
             ctx.redirect("/index.html"); // redirect
             System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
         }
         else {
+            ctx.status(401);
             ctx.redirect("/login");
         }
     }
