@@ -241,23 +241,23 @@ public class NoteEndpoints {
     }
 
     private void makeNote(Context ctx) {
-        if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != null) {
-            int userid = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
-            String safe = policy.sanitize(ctx.formParam("body"));
-            Node body = parser.parse(safe);
-            Note n = new Note(ctx.formParam("title"), safe, (getDb().getMaxID("notes") + 1), ctx.formParam("color"), renderer.render(body), userid);
+        Login cookie  = db.checkCookie(ctx.cookie("com.aschwartz.notes"));
+        if (cookie != null) {
+            int userid = cookie.getUserId();
+            String cleanBody = policy.sanitize(ctx.formParam("body"));
+            String cleanTitle  = policy.sanitize(ctx.formParam("title"));
+            Node body = parser.parse(cleanBody);
+            Note n = new Note(cleanTitle, cleanBody, (getDb().getMaxID("notes") + 1), ctx.formParam("color"), renderer.render(body), userid);
             if (n.getTitle().equals("")) {
                 n.setTitle(null);
-                ;
             }
             if (n.getColor().equals("")) {
                 n.setColor(null);
             }
             getDb().addNote(n);
-
             ctx.status(200);
-            ctx.redirect("/index.html"); // redirect
-            System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
+            ctx.redirect("/index.html");
+            System.out.println("[" + ctx.ip() + "] " + userid + " created " + n.getId() + "...");
         }
         else {
             ctx.status(401);
