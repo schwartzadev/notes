@@ -1,21 +1,7 @@
 <#include "*/snippets/header.ftl">
 <#include "*/snippets/index.html">
 <h1 class="pagetitle">all notes</h1>
-<script>
-function deleteMe(id) {
-	var url = 'delete/' + id;
-	$.ajax({
-		url: url,
-		success: function(result) {
-			console.log('deleted ' + id);
-			$('#' + id).hide(120);
-		},
-		error: function() {
-            alert("an error occurred while trying to delete a note");
-        }
-	});
-}
-</script>
+<script src="/scripts.js"></script>
 <div class="container">
     <#list notes as note>
         <div class="note" id="${note.getId()}" style="background-color:${note.getColor()};">
