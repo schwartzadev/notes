@@ -122,28 +122,53 @@ public class NoteEndpoints {
     private void deleteNote(Context ctx) {
         System.out.println("[" + ctx.ip() + "] deleting " + ctx.param("id") + "...");
         // todo authenticate here, check that note id belongs to logged in user
+        int loggedInUserId = -1;
+        int noteOwnerUserId = 0;
         try {
-            getDb().archiveNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
-            ctx.status(201);
-        } catch (NumberFormatException nfe) {
-            ctx.status(500);
-            ctx.html("invalid request. Specify a note id to delete.<br><a href=\"/index.html\">return to home</a>");
-        } catch (Exception e) {
-            ctx.status(500);
-            e.printStackTrace();
+            loggedInUserId = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
+            noteOwnerUserId = getDb().getNoteByID(Integer.parseInt(ctx.param("id"))).getUserId();
+        } catch (NullPointerException npe) {
+//            ctx.html("access denied");
+            ctx.status(403);
+        }
+        if (loggedInUserId == noteOwnerUserId) {
+            try {
+                getDb().archiveNote(Integer.parseInt(ctx.param("id"))); // can throw nfe
+                ctx.status(201);
+            } catch (NumberFormatException nfe) {
+                ctx.status(500);
+                ctx.html("invalid request. Specify a note id to delete.<br><a href=\"/index.html\">return to home</a>");
+            } catch (Exception e) {
+                ctx.status(500);
+                e.printStackTrace();
+            }
+        } else {
+//            ctx.html("access denied");
+            ctx.status(403);
         }
     }
 
     private void editNote(Context ctx) {
-        System.out.println(("[" + ctx.ip() + "] editing " + ctx.param("id")) + "...");
         int id = -1;
+        int loggedInUserId = -1;
+        int noteOwnerUserId = 0;
         try {
-            id = Integer.parseInt(ctx.param("id")); // can throw nfe
-        } catch (NumberFormatException nfe) {
-            ctx.html("invalid request. Specify a note id to edit.<br><a href=\"/index.html\">return to home</a>");
+            loggedInUserId = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
+            noteOwnerUserId = getDb().getNoteByID(Integer.parseInt(ctx.param("id"))).getUserId();
+            System.out.println(("[" + ctx.ip() + "] editing " + ctx.param("id")) + "...");
+        } catch (NullPointerException npe) {
+//            ctx.html("access denied");
+            ctx.status(403);
         }
-        Note n = getDb().getNoteByID(id);
-        ctx.html(te.editPage(n));
+        if (loggedInUserId == noteOwnerUserId) {
+            try {
+                id = Integer.parseInt(ctx.param("id")); // can throw nfe
+            } catch (NumberFormatException nfe) {
+                ctx.status(403);
+            }
+            Note n = getDb().getNoteByID(id);
+            ctx.html(te.editPage(n));
+        }
     }
 
     private void updateNote(Context ctx) {
@@ -187,7 +212,6 @@ public class NoteEndpoints {
         // check for login cookie
         String cookie = ctx.cookie("com.aschwartz.notes");
         int loggedInUser = 0;
-//        if (cookie != null && (loggedInUser==(-1) || loggedInUser==0)) { // only check cookie if it exists
         if (cookie != null) { // only check cookie if it exists
             loggedInUser = db.checkCookie(cookie).getUserId();
             System.out.println("[" + ctx.ip() + "] " + loggedInUser + " is logged in");
