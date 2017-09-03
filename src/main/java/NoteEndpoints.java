@@ -206,7 +206,7 @@ public class NoteEndpoints {
             getDb().deleteNote(id);
             getDb().addNote(n);
             ctx.status(200);
-            ctx.redirect("/index.html"); // redirect
+            ctx.redirect("/index.html#" + n.getId()); // redirect
             System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
         }
         else {
