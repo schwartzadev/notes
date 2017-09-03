@@ -7,6 +7,28 @@ function togglePass() {
     }
 }
 
+function checkRegister() {
+    var pass1 = document.getElementById("first-pass");
+    var pass2 = document.getElementById("second-pass");
+    var ok = true;
+    var lengthError = "your password must contain at least 6 characters";
+    var passError = "passwords don't match"
+    if (pass1.value != pass2.value) {
+        pass1.style.borderColor = "#E34234";
+        pass2.style.borderColor = "#E34234";
+        document.getElementById("message").innerHTML = passError;
+        document.getElementById("message").textContent = passError;
+        ok = false;
+    } else {
+        if (pass1.value.length < 6) {
+            document.getElementById("message").innerHTML = lengthError;
+            document.getElementById("message").textContent = lengthError;
+            ok = false;
+        }
+    }
+    return ok;
+}
+
 function deleteMe(id) {
 	var url = 'delete/' + id;
 	$.ajax({

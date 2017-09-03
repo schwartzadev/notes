@@ -185,7 +185,8 @@ div.hastitle ul li {
     font-weight: 400;
 }
 
-button {
+button,
+input[type=submit] {
     font-size: 2em;
 }
 
@@ -222,6 +223,10 @@ input#colorchoice {
     width: 1.5em;
     height: 1.5em;
     border-radius: 5px;
+}
+
+span#message {
+    color: #E34234;
 }
 
 /* NAV */
