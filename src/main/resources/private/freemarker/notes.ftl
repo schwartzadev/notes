@@ -16,9 +16,9 @@
             <div class="toolbar">
                 <#list iconlist as pair>
                     <#--<#if pair.getEndpointName() = "edit">-->
-                        <!--<a id="edit-trigger-${note.getId()}" href="${pair.getEndpointName()}/${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>-->
+                        <#--<a id="edit-trigger-${note.getId()}" href="${pair.getEndpointName()}/${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>-->
                     <#if pair.getEndpointName() = "delete">
-                        <!--<a href="${pair.getEndpointName()}/${note.id}" onclick="deleteMe(this, ${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>-->
+                        <#--<a href="${pair.getEndpointName()}/${note.id}" onclick="deleteMe(this, ${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>-->
                         <a title="delete" onclick="deleteMe(${note.id})"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
                     <#elseif pair.getEndpointName() = "share">
                         <#if note.getTitle()??>
