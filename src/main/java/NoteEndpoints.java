@@ -237,6 +237,7 @@ public class NoteEndpoints {
             details.add(new IconDetail("trash", "delete"));
             details.add(new IconDetail("pencil", "edit"));
             details.add(new IconDetail("push-pin", "pin"));
+            details.add(new IconDetail("share", "share"));
             ctx.html(notePage(dbNotes, details, ctx.cookie("com.aschwartz.notes")));
             ctx.status(200);
         } else {

@@ -1,3 +1,5 @@
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Random;
 
 /**
@@ -74,6 +76,28 @@ public class Note {
 
     public void setBody(String body){
         this.body=body;
+    }
+
+    public String getEncodedHtml() {
+        return encode(this.getHtml());
+    }
+    public String getEncodedTitle() {
+        return encode(this.getTitle());
+    }
+
+    public String getEncodedBody() {
+        return encode(this.getBody());
+    }
+    private String encode(String input) {
+        /**
+         * encode a string for a url
+         */
+        try {
+            return URLEncoder.encode(input, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public String getColor() {
