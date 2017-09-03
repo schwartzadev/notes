@@ -104,9 +104,9 @@ public class NoteEndpoints {
         if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != null) {
             List<Note> notes = getDb().getArchivedNotes(db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId());
             List<IconDetail> details = new ArrayList<>();
-            details.add(new IconDetail("pencil", "edit"));
+//            details.add(new IconDetail("pencil", "edit"));
             details.add(new IconDetail("undo", "restore"));
-            notePage(ctx, notes, details); // todo don't pass ctx, instead set ctx.html to method call of notePage
+            ctx.html(notePage(notes, details, ctx.cookie("com.aschwartz.notes")));
             ctx.status(200);
         }
         else {
@@ -120,8 +120,8 @@ public class NoteEndpoints {
         System.out.println("[" + ctx.ip() + "] restoring " + id + "...");
         try {
             ctx.status(200);
-            ctx.redirect("/index.html"); // redirect
             getDb().restoreNote(id); // can throw nfe
+            ctx.redirect("/archived.html"); // redirect
         } catch (NumberFormatException nfe) {
             ctx.status(400);
             ctx.html("invalid request. Specify a note id to restore.<br><a href=\"/index.html\">return to home</a>");
@@ -185,8 +185,9 @@ public class NoteEndpoints {
 
     private void updateNote(Context ctx) {
         if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != null) {
-            int userid = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
+            int userId = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
             String safe = policy.sanitize((ctx.formParam("body")));
+            String title = policy.sanitize(ctx.formParam("title"));
             Node body = parser.parse(safe);
             int id = -1;
             try {
@@ -195,7 +196,7 @@ public class NoteEndpoints {
                 System.out.println("[" + ctx.ip() + "] ***update " + id + " failed");
             }
 
-            Note n = new Note(ctx.formParam("title"), safe, id, ctx.formParam("color"), renderer.render(body), userid);
+            Note n = new Note(title, safe, id, ctx.formParam("color"), renderer.render(body), userId);
             if (n.getTitle() != null && n.getTitle().equals("")) {
                 n.setTitle(null);
             }
@@ -214,11 +215,14 @@ public class NoteEndpoints {
         }
     }
 
-    private void notePage(Context ctx, List<Note> notes, List<IconDetail> iconDetails) {
+    private String notePage(List<Note> notes, List<IconDetail> iconDetails, String cookie) {
         /**
          * template for index and archived pages
          */
-        ctx.html(te.noteListHtml(notes, iconDetails, db.getUserByID(db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId())));
+        return (te.noteListHtml(notes,
+                iconDetails,
+                db.getUserByID(db.checkCookie(cookie).getUserId()))
+        );
     }
 
     private void index(Context ctx) {
@@ -233,9 +237,10 @@ public class NoteEndpoints {
             details.add(new IconDetail("trash", "delete"));
             details.add(new IconDetail("pencil", "edit"));
             details.add(new IconDetail("push-pin", "pin"));
-            notePage(ctx, dbNotes, details);
+            ctx.html(notePage(dbNotes, details, ctx.cookie("com.aschwartz.notes")));
+            ctx.status(200);
         } else {
-
+            ctx.status(401);
             ctx.redirect("/login");
         }
     }
