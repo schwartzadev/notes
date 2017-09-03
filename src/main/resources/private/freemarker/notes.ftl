@@ -21,7 +21,11 @@
                         <!--<a href="${pair.getEndpointName()}/${note.id}" onclick="deleteMe(this, ${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>-->
                         <a title="delete" onclick="deleteMe(${note.id})"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
                     <#elseif pair.getEndpointName() = "share">
-                        <a title="share" href="mailto:?to=&body=${note.getEncodedBody()},&subject=A+Note%3A+${note.getEncodedTitle()}" target="_blank"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
+                        <#if note.getTitle()??>
+                            <a title="share" href="mailto:?to=&body=${note.getEncodedBody()},&subject=A+Note%3A+${note.getEncodedTitle()!}" target="_blank"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
+                        <#else>
+                            <a title="share" href="mailto:?to=&body=${note.getEncodedBody()},&subject=A+Note+For+You" target="_blank"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
+                        </#if>
                     <#else>
                         <a title="${pair.getEndpointName()}" href="${pair.getEndpointName()}/${note.id}"><img class="icon" src="./img/${pair.getIconName()}.svg"></a>
                     </#if>
