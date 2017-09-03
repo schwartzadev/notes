@@ -97,13 +97,17 @@ div.hastitle ul li {
     width: 40px;
 }
 
+.note {
+    min-width: 230px; /*width of toolbar*/
+}
+
 .toolbar a  {
-    margin-left: 1em;
+    margin-left: 16px;
     cursor: pointer;
 }
 
 .toolbar a:first-child {
-    margin-left: .5em;
+    margin-left: 10px;
 }
 
 #passInput {
