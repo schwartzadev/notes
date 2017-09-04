@@ -5,6 +5,7 @@
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous">
     </script>
+    <script src="/scripts.js"></script>
 </head>
 <div class="topnav">
     <b><a id="popupTrigger"><img src="./img/plus.svg" id="add-note-img"></a></b>
@@ -52,26 +53,5 @@
 </div>
 
 <script>
-var modal = document.getElementById('myModal');
-var btn = document.getElementById('popupTrigger');
-var close = document.getElementsByClassName('close')[0];
-document.addEventListener("keydown", escKeyDown, false);
-
-function escKeyDown(e) {
-  if(e.keyCode==27) {
-    modal.style.display = "none";
-  }
-}
-
-btn.onclick = function() {
-    modal.style.display = "block";
-}
-close.onclick = function() {
-    modal.style.display = "none";
-}
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
+    modalScripts();
 </script>

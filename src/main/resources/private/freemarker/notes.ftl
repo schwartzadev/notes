@@ -1,7 +1,6 @@
 <#include "*/snippets/header.ftl">
 <#include "*/snippets/index.html">
 <h1 class="pagetitle">all notes</h1>
-<script src="/scripts.js"></script>
 <div class="container">
     <#list notes as note>
         <div class="note" id="${note.getId()}" style="background-color:${note.getColor()};">
