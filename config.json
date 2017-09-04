@@ -1,0 +1,7 @@
+{
+  "SQL" : {
+    "username" : "root",
+    "password" : "MyNewPass",
+    "url" : "jdbc:mysql://localhost/NOTES?useSSL=true&autoReconnect=true"
+  }
+}
