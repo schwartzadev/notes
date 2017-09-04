@@ -60,6 +60,19 @@ public class NoteEndpoints {
         getApp().get("/logout", this::logOut);
         getApp().get("/pin/:id", this::pin);
         getApp().get("/un-pin/:id", this::unpin);
+//        getApp().get("/herokuvartest", this::herokuTest);
+        getApp().get("/status", this::status);
+    }
+
+    private void status(Context context) {
+        context.html("<h1>online!</h1>");
+    }
+
+    private void herokuTest(Context c) {
+        String user = System.getenv("SqlUser");
+        String pass = System.getenv("SqlPass");
+        String url = System.getenv("SqlUrl");
+        c.html("user: " + user + "<br><br>pass: " + pass + "<br><br>url: " + url);
     }
 
     private void logOut(Context context) {

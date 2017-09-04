@@ -45,7 +45,8 @@
                 <version>1.1.3</version>
                 <configuration>
                     <jdkVersion>1.8</jdkVersion>
-                    <appName>javalin-heroku-example</appName>
+                    <!--heroku app name:-->
+                    <appName>andrews-notes</appName>
                     <processTypes>
                         <!-- Tell Heroku how to launch your application -->
                         <web>java -jar ./target/htmltests-1.0-SNAPSHOT-jar-with-dependencies.jar</web>
