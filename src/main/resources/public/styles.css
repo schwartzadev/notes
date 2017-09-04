@@ -101,6 +101,10 @@ div.hastitle ul li {
     min-width: 230px; /*width of toolbar*/
 }
 
+.note div.content p {
+    overflow-wrap: break-word;
+}
+
 .toolbar a  {
     margin-left: 16px;
     cursor: pointer;
