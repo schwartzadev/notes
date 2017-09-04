@@ -11,8 +11,30 @@ public class Note {
     private int id;
     private int userId;
     private String color;
-    private boolean archived; // 0 is false, non-zero is true (will use 1)
+    private boolean archived;
+    private boolean isPinned;
     private String html;
+
+    public Note(String title, String body, int id, int userId, String color, boolean archived, boolean isPinned, String html) {
+        this.title = title;
+        this.body = body;
+        this.id = id;
+        this.userId = userId;
+        this.color = color;
+        this.archived = archived;
+        this.isPinned = isPinned;
+        this.html = html;
+    }
+
+    public Note(String title, String body, int id, int userId, String color, boolean isPinned, String html) {
+        this.title = title;
+        this.body = body;
+        this.id = id;
+        this.userId = userId;
+        this.color = color;
+        this.isPinned = isPinned;
+        this.html = html;
+    }
 
     public Note(String title, String body, int id, String color, int userId) {
         this.title = title;
@@ -21,7 +43,6 @@ public class Note {
         this.color = color;
         this.archived = false; // not archived
         this.userId = userId;
-//        this.html = null;
     }
 
     public Note(String title, String body, int id, String color, String html, int userId) {
@@ -34,12 +55,9 @@ public class Note {
         this.userId = userId;
     }
 
+
     public int getUserId() {
         return userId;
-    }
-
-    public boolean getArchived() {
-        return archived;
     }
 
     public String getHtml() {
@@ -115,5 +133,21 @@ public class Note {
 
     public void setColor(String color){
         this.color=color;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
+    public boolean isPinned() {
+        return isPinned;
+    }
+
+    public void setPinned(boolean pinned) {
+        isPinned = pinned;
     }
 }

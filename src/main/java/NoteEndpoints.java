@@ -50,6 +50,8 @@ public class NoteEndpoints {
         getApp().post("/sign-in", this::loginHandler);
         getApp().get("/", this::rootRedirect);
         getApp().get("/logout", this::logOut);
+        getApp().get("/pin/:id", this::pin);
+//        getApp().get("/un-pin/:id", this::);
     }
 
     private void logOut(Context context) {
@@ -130,9 +132,8 @@ public class NoteEndpoints {
         }
     }
 
-    private void deleteNote(Context ctx) {
-        System.out.println("[" + ctx.ip() + "] deleting " + ctx.param("id") + "...");
-        // todo authenticate here, check that note id belongs to logged in user
+    private void pin(Context ctx) {
+        System.out.println("[" + ctx.ip() + "] pinned " + ctx.param("id"));
         int loggedInUserId = -1;
         int noteOwnerUserId = 0;
         try {
@@ -140,7 +141,37 @@ public class NoteEndpoints {
             noteOwnerUserId = getDb().getNoteByID(Integer.parseInt(ctx.param("id"))).getUserId();
         } catch (NullPointerException npe) {
 //            ctx.html("access denied");
+            ctx.status(403); // no/invalid cookie exists
+        }
+        if (loggedInUserId == noteOwnerUserId) {
+            int nId = Integer.parseInt(ctx.param("id"));
+            try {
+                getDb().pinNote(nId); // can throw nfe
+                ctx.status(201);
+                ctx.redirect("/index.html#" + nId); // redirect
+            } catch (NumberFormatException nfe) {
+                ctx.status(500);
+                ctx.html("invalid request. Specify a note id to pin.<br><a href=\"/index.html\">return to home</a>");
+            } catch (Exception e) {
+                ctx.status(500);
+                e.printStackTrace();
+            }
+        } else {
+//            ctx.html("access denied");
             ctx.status(403);
+        }
+    }
+
+    private void deleteNote(Context ctx) {
+        System.out.println("[" + ctx.ip() + "] deleting " + ctx.param("id") + "...");
+        int loggedInUserId = -1;
+        int noteOwnerUserId = 0;
+        try {
+            loggedInUserId = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
+            noteOwnerUserId = getDb().getNoteByID(Integer.parseInt(ctx.param("id"))).getUserId();
+        } catch (NullPointerException npe) {
+//            ctx.html("access denied");
+            ctx.status(403); // no/invalid cookie exists
         }
         if (loggedInUserId == noteOwnerUserId) {
             try {
@@ -219,7 +250,17 @@ public class NoteEndpoints {
         /**
          * template for index and archived pages
          */
-        return (te.noteListHtml(notes,
+        return (te.noteListHtml(notes, null,
+                iconDetails,
+                db.getUserByID(db.checkCookie(cookie).getUserId()))
+        );
+    }
+
+    private String notePage(List<Note> notes, List<Note> pins, List<IconDetail> iconDetails, String cookie) {
+        /**
+         * template for index and archived pages
+         */
+        return (te.noteListHtml(notes, pins,
                 iconDetails,
                 db.getUserByID(db.checkCookie(cookie).getUserId()))
         );
@@ -232,13 +273,13 @@ public class NoteEndpoints {
         if (cookie != null) { // only check cookie if it exists
             loggedInUser = db.checkCookie(cookie).getUserId();
             System.out.println("[" + ctx.ip() + "] " + loggedInUser + " is logged in");
-            List<Note> dbNotes = getDb().getActiveNotes(loggedInUser);
+            List<Note> dbNotes = getDb().getMainNotes(loggedInUser);
             List<IconDetail> details = new ArrayList<>();
             details.add(new IconDetail("trash", "delete"));
             details.add(new IconDetail("pencil", "edit"));
             details.add(new IconDetail("push-pin", "pin"));
             details.add(new IconDetail("share", "share"));
-            ctx.html(notePage(dbNotes, details, ctx.cookie("com.aschwartz.notes")));
+            ctx.html(notePage(dbNotes, getDb().getPinnedNotes(loggedInUser), details, ctx.cookie("com.aschwartz.notes")));
             ctx.status(200);
         } else {
             ctx.status(401);

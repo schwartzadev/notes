@@ -12,10 +12,11 @@ import java.util.Map;
  * Created by Andrew Schwartz on 8/13/17.
  */
 public class TemplateEngine {
-    public String noteListHtml(List<Note> notes, List<IconDetail> iconDetails, User u) {
+    public String noteListHtml(List<Note> regNotes, List<Note> pinnedNotes, List<IconDetail> iconDetails, User u) {
         Configuration cfg = new Configuration();
         Map<String, Object> root = new HashMap<>();
-        root.put("notes", notes);
+        root.put("notes", regNotes);
+        root.put("pinnedNotes", pinnedNotes);
         root.put("iconlist", iconDetails);
         root.put("user", u);
         Writer out = new StringWriter();

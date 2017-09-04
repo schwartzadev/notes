@@ -1,12 +1,10 @@
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang.RandomStringUtils;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
 
 public class Database {
-    private final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private Connection conn;
 
     public Database(Config config) {
@@ -19,7 +17,68 @@ public class Database {
 
     public List<Note> getAllNotes(int userid) {
         try {
-            return getNotes(conn.prepareStatement("SELECT * FROM Notes;" ), userid);
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM Notes WHERE user_id = ?;");
+            statement.setInt(1, userid);
+            return getNotes(statement);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Note> getPinnedNotes(int userId) {
+        return getNotesByPin(true, userId);
+    }
+
+    public List<Note> getNonPinnedNotes(int id) {
+        return getNotesByPin(false, id);
+    }
+
+    public void pinNote(Note n) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement("update notes set archived = 1 where id = ? ;" );
+            sql.setInt(1, n.getId());
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void pinNote(int id) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement("update notes set ispinned = 1 where id = ? ;" );
+            sql.setInt(1, id);
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<Note> getNotesByPin(Boolean b, int user) {
+        /**
+         * gets pinned / non-pinned notes, depending on b
+         */
+        try {
+            PreparedStatement statement = conn.prepareStatement("select * from notes where ispinned = ? and user_id = ? order by id desc;");
+            statement.setBoolean(1, b);
+            statement.setInt(2, user);
+            return getNotes(statement);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Note> getMainNotes(int userId) {
+        /**
+         * gets non-archived, non-pinned notes
+         */
+        try {
+            PreparedStatement statement = conn.prepareStatement("select * from notes where archived = false and ispinned = false and user_id = ? order by id desc;");
+            statement.setInt(1, userId);
+            return getNotes(statement);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,26 +104,28 @@ public class Database {
             PreparedStatement statement = conn.prepareStatement("select * from notes where archived = ? and user_id = ? order by id desc;");
             statement.setBoolean(1, bool);
             statement.setInt(2, userid);
-            return getNotes(statement, userid);
+            return getNotes(statement);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-
-    public List<Note> getNotes(PreparedStatement sql, int userid) {
+    public List<Note> getNotes(PreparedStatement sql) {
         List<Note> notes = new ArrayList<Note>();
         try {
             Class.forName("com.mysql.jdbc.Driver");
             ResultSet rs = sql.executeQuery();
             while(rs.next()){
-                String title = rs.getString("title");
                 int id = Integer.parseInt(rs.getString("id"));
+                String title = rs.getString("title");
                 String body = rs.getString("body");
                 String color = rs.getString("color");
+                boolean isArchived = rs.getBoolean("archived");
                 String html = rs.getString("html");
-                notes.add(new Note(title, body, id, color, html, userid));
+                int user = Integer.parseInt(rs.getString("user_id"));
+                boolean isPinned = rs.getBoolean("ispinned");
+                notes.add(new Note(title, body, id, user, color, isArchived, isPinned, html));
             }
             rs.close();
             // conn.close();
@@ -79,14 +140,15 @@ public class Database {
         PreparedStatement sql = null;
         try {
             sql = conn.prepareStatement(
-                    "INSERT into notes VALUES ( ? , ? , ? , ? , ?, ?, ? )" );
+                    "INSERT into notes VALUES ( ? , ? , ? , ? , ? , ? , ?, ? )" );
             sql.setInt(1, n.getId());
             sql.setString(2, n.getTitle());
             sql.setString(3, n.getBody());
             sql.setString(4, n.getColor());
-            sql.setBoolean(5, n.getArchived());
+            sql.setBoolean(5, n.isArchived());
             sql.setString(6, n.getHtml());
             sql.setInt(7, n.getUserId());
+            sql.setBoolean(8, n.isPinned());
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -120,8 +182,7 @@ public class Database {
     public void archiveNote(int id) {
         PreparedStatement sql = null;
         try {
-            sql = conn.prepareStatement(
-                    "update notes set archived = 1 where id = ? ;" );
+            sql = conn.prepareStatement("update notes set archived = 1 where id = ? ;" );
             sql.setInt(1, id);
             Database.executeQuery(sql);
         } catch (SQLException e) {
@@ -162,6 +223,7 @@ public class Database {
         }
         return null; // if try fails
     }
+
     public User getUserByID(int id) {
         PreparedStatement sql = null;
         try {
