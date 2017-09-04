@@ -6,7 +6,7 @@
         <br>
         <label><b>Username</b></label>
         <br>
-        <input type="text" placeholder="Enter Username" name="username" required>
+        <input id="username" type="text" placeholder="Enter Username" name="username" required>
         <br>
         <label><b>Password</b></label>
         <br>

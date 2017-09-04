@@ -8,22 +8,33 @@ function togglePass() {
 }
 
 function checkRegister() {
+    function failedTest(error) {
+        message.innerHTML = error;
+        message.textContent = error;
+        ok = false;
+    }
+
+    var user = document.getElementById("username");
     var pass1 = document.getElementById("first-pass");
     var pass2 = document.getElementById("second-pass");
+    var message = document.getElementById("message");
     var ok = true;
-    var lengthError = "your password must contain at least 6 characters";
-    var passError = "passwords don't match"
     if (pass1.value != pass2.value) {
         pass1.style.borderColor = "#E34234";
         pass2.style.borderColor = "#E34234";
-        document.getElementById("message").innerHTML = passError;
-        document.getElementById("message").textContent = passError;
-        ok = false;
+        failedTest("passwords don't match");
     } else {
         if (pass1.value.length < 6) {
-            document.getElementById("message").innerHTML = lengthError;
-            document.getElementById("message").textContent = lengthError;
-            ok = false;
+            failedTest('your password must contain at least 6 characters');
+        }
+        if (pass1.value.length >= 255) {
+            failedTest('your password must contain less than 255 characters');
+        }
+        if (user.value.length >= 255) {
+            failedTest('your username must contain less than 255 characters');
+        }
+        if (user.value.length < 4) {
+            failedTest('your username must contain at least 4 characters');
         }
     }
     return ok;
