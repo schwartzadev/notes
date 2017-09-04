@@ -29,11 +29,19 @@ public class NoteEndpoints {
     public NoteEndpoints(Database db) {
         this.db = db;
         Javalin newApp = io.javalin.Javalin.create()
-                .port(7777)
+                .port(getHerokuAssignedPort())
                 .enableStaticFiles("/public")
                 .start();
         setApp(newApp);
         registerEndpoints();
+    }
+
+    private static int getHerokuAssignedPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 7777;
     }
 
     private void registerEndpoints() {
