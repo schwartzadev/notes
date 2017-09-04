@@ -41,6 +41,7 @@ public class Database {
     public void pinNote(int id) {
         changePinStatus(id, true);
     }
+
     public void unPinNote(Note n) {
         changePinStatus(n.getId(), false);
     }

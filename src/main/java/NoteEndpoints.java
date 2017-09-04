@@ -88,13 +88,23 @@ public class NoteEndpoints {
     }
 
     private void registerHandler(Context ctx) {
-        boolean remmber = false;
+        boolean remember = false;
         if (ctx.formParam("remember").equals("on")) {
-            remmber = true;
+            remember = true;
         }
-        db.addUser(new User(db.getMaxID("users")+1, remmber, ctx.formParam("username"), ctx.formParam("pwd")));
-        ctx.status(200);
-        ctx.redirect("/login");
+        String pass = ctx.formParam("pwd");
+        String user = ctx.formParam("username");
+        if (pass.length() < 6 ||
+                pass.length() > 255 ||
+                user.length() > 255 ||
+                user.length() < 4) {
+            ctx.redirect("/register");
+        }
+        else {
+            db.addUser(new User(db.getMaxID("users") + 1, remember, user, pass));
+            ctx.status(200);
+            ctx.redirect("/login");
+        }
     }
 
     private void rootRedirect(Context ctx) {
