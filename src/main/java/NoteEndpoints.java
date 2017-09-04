@@ -51,7 +51,7 @@ public class NoteEndpoints {
         getApp().get("/", this::rootRedirect);
         getApp().get("/logout", this::logOut);
         getApp().get("/pin/:id", this::pin);
-//        getApp().get("/un-pin/:id", this::);
+        getApp().get("/un-pin/:id", this::unpin);
     }
 
     private void logOut(Context context) {
@@ -147,6 +147,36 @@ public class NoteEndpoints {
             int nId = Integer.parseInt(ctx.param("id"));
             try {
                 getDb().pinNote(nId); // can throw nfe
+                ctx.status(201);
+                ctx.redirect("/index.html#" + nId); // redirect
+            } catch (NumberFormatException nfe) {
+                ctx.status(500);
+                ctx.html("invalid request. Specify a note id to pin.<br><a href=\"/index.html\">return to home</a>");
+            } catch (Exception e) {
+                ctx.status(500);
+                e.printStackTrace();
+            }
+        } else {
+//            ctx.html("access denied");
+            ctx.status(403);
+        }
+    }
+
+    private void unpin(Context ctx) {
+        System.out.println("[" + ctx.ip() + "] un-pinned " + ctx.param("id"));
+        int loggedInUserId = -1;
+        int noteOwnerUserId = 0;
+        try {
+            loggedInUserId = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
+            noteOwnerUserId = getDb().getNoteByID(Integer.parseInt(ctx.param("id"))).getUserId();
+        } catch (NullPointerException npe) {
+//            ctx.html("access denied");
+            ctx.status(403); // no/invalid cookie exists
+        }
+        if (loggedInUserId == noteOwnerUserId) {
+            int nId = Integer.parseInt(ctx.param("id"));
+            try {
+                getDb().unPinNote(nId); // can throw nfe
                 ctx.status(201);
                 ctx.redirect("/index.html#" + nId); // redirect
             } catch (NumberFormatException nfe) {

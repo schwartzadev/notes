@@ -35,21 +35,26 @@ public class Database {
     }
 
     public void pinNote(Note n) {
-        PreparedStatement sql = null;
-        try {
-            sql = conn.prepareStatement("update notes set archived = 1 where id = ? ;" );
-            sql.setInt(1, n.getId());
-            Database.executeQuery(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        changePinStatus(n.getId(), true);
     }
 
     public void pinNote(int id) {
+        changePinStatus(id, true);
+    }
+    public void unPinNote(Note n) {
+        changePinStatus(n.getId(), false);
+    }
+
+    public void unPinNote(int id) {
+        changePinStatus(id, false);
+    }
+
+    private void changePinStatus(int id, boolean status) {
         PreparedStatement sql = null;
         try {
-            sql = conn.prepareStatement("update notes set ispinned = 1 where id = ? ;" );
-            sql.setInt(1, id);
+            sql = conn.prepareStatement("update notes set ispinned = ? where id = ? ;" );
+            sql.setBoolean(1, status);
+            sql.setInt(2, id);
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
