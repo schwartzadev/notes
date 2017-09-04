@@ -64,9 +64,10 @@ public class Database {
     private List<Note> getNotesByPin(Boolean b, int user) {
         /**
          * gets pinned / non-pinned notes, depending on b
+         * *** only gets unarchived (pinned) notes
          */
         try {
-            PreparedStatement statement = conn.prepareStatement("select * from notes where ispinned = ? and user_id = ? order by id desc;");
+            PreparedStatement statement = conn.prepareStatement("select * from notes where ispinned = ? and user_id = ? and archived = false order by id desc;");
             statement.setBoolean(1, b);
             statement.setInt(2, user);
             return getNotes(statement);
@@ -162,6 +163,21 @@ public class Database {
 
     public void deleteNote(int id) {
         deleteDbOject(id, "notes");
+    }
+
+    public void updateNote(Note n) {
+        PreparedStatement sql = null;
+        try {
+            sql = conn.prepareStatement("update notes set title = ?, body = ?, color = ?, html = ? where id = ? ;" );
+            sql.setString(1, n.getTitle());
+            sql.setString(2, n.getBody());
+            sql.setString(3, n.getColor());
+            sql.setString(4, n.getHtml());
+            sql.setInt(5, n.getId());
+            Database.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteLogin(int id) {

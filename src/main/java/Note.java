@@ -55,7 +55,6 @@ public class Note {
         this.userId = userId;
     }
 
-
     public int getUserId() {
         return userId;
     }

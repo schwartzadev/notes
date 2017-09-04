@@ -163,7 +163,7 @@ public class NoteEndpoints {
             try {
                 getDb().unPinNote(nId); // can throw nfe
                 ctx.status(201);
-                ctx.redirect("/index.html#" + nId); // redirect
+                ctx.redirect("/index.html"); // redirect
             } catch (NumberFormatException nfe) {
                 ctx.status(500);
                 ctx.html("invalid request. Specify a note id to pin.<br><a href=\"/index.html\">return to home</a>");
@@ -213,25 +213,23 @@ public class NoteEndpoints {
     private void updateNote(Context ctx) {
         if (db.checkCookie(ctx.cookie("com.aschwartz.notes")) != null) {
             int userId = db.checkCookie(ctx.cookie("com.aschwartz.notes")).getUserId();
-            String safe = policy.sanitize((ctx.formParam("body")));
+            String safeBody = policy.sanitize((ctx.formParam("body")));
             String title = policy.sanitize(ctx.formParam("title"));
-            Node body = parser.parse(safe);
+            Node genHtml = parser.parse(safeBody);
             int id = -1;
             try {
                 id = Integer.parseInt(ctx.formParam("id")); // can throw nfe
             } catch (NumberFormatException nfe) {
                 System.out.println("[" + ctx.ip() + "] ***update " + id + " failed");
             }
-
-            Note n = new Note(title, safe, id, ctx.formParam("color"), renderer.render(body), userId);
-            if (n.getTitle() != null && n.getTitle().equals("")) {
+            Note n = new Note(title, safeBody, id, ctx.formParam("color"), renderer.render(genHtml), userId);
+            if (n.getTitle().equals("")) {
                 n.setTitle(null);
             }
             if (n.getColor().equals("")) {
                 n.setColor(null);
             }
-            getDb().deleteNote(id);
-            getDb().addNote(n);
+            getDb().updateNote(n);
             ctx.status(200);
             ctx.redirect("/index.html#" + n.getId()); // redirect
             System.out.println("[" + ctx.ip() + "] created " + n.getId() + "...");
