@@ -16,6 +16,7 @@ CREATE TABLE `notes` (
   `archived` tinyint(1) DEFAULT '0',
   `html` varchar(10000) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL
+  `ispinned` tinyint(1) NOT NULL DEFAULT '0'
 )
 ```
 3. Add the users table like so:
