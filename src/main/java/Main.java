@@ -8,7 +8,7 @@
 
 public class Main {
     public static void main(String[] args) {
-        Database database = new Database(new JsonConfig());
+        Database database = new Database(new SimpleConfig());
         new NoteEndpoints(database);
     }
 }

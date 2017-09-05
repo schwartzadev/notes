@@ -1,27 +1,41 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.RandomStringUtils;
 
 import java.sql.*;
 import java.util.*;
 
 public class Database {
-    private Connection conn;
+    private Config config;
+    private BasicDataSource ds;
+
+    private Connection makeConnection() throws SQLException{
+        return this.ds.getConnection();
+    }
 
     public Database(Config config) {
-        try {
-            this.conn = DriverManager.getConnection(config.getDbUrl(),config.getSqlUsername(),config.getSqlPassword());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.config = config;
+        this.ds = new BasicDataSource();
+        this.ds.setDriverClassName("com.mysql.jdbc.Driver");
+        this.ds.setUsername(config.getSqlUsername());
+        this.ds.setPassword(config.getSqlPassword());
+        this.ds.setUrl(config.getDbUrl());
     }
 
     public List<Note> getAllNotes(int userid) {
+        Connection connection = null;
         try {
-            PreparedStatement statement = conn.prepareStatement("SELECT * FROM Notes WHERE user_id = ?;");
+            connection = makeConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Notes WHERE user_id = ?;");
             statement.setInt(1, userid);
             return getNotes(statement);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -52,13 +66,21 @@ public class Database {
 
     private void changePinStatus(int id, boolean status) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement("update notes set ispinned = ? where id = ? ;" );
             sql.setBoolean(1, status);
             sql.setInt(2, id);
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -67,13 +89,21 @@ public class Database {
          * gets pinned / non-pinned notes, depending on b
          * *** only gets unarchived (pinned) notes
          */
+        Connection conn = null;
         try {
+            conn = makeConnection();
             PreparedStatement statement = conn.prepareStatement("select * from notes where ispinned = ? and user_id = ? and archived = false order by id desc;");
             statement.setBoolean(1, b);
             statement.setInt(2, user);
             return getNotes(statement);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -82,12 +112,20 @@ public class Database {
         /**
          * gets non-archived, non-pinned notes
          */
+        Connection conn = null;
         try {
+            conn = makeConnection();
             PreparedStatement statement = conn.prepareStatement("select * from notes where archived = false and ispinned = false and user_id = ? order by id desc;");
             statement.setInt(1, userId);
             return getNotes(statement);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -107,13 +145,21 @@ public class Database {
         /**
          * gets archived / non-archived (active) notes, depending on bool
          */
+        Connection conn = null;
         try {
+            conn = makeConnection();
             PreparedStatement statement = conn.prepareStatement("select * from notes where archived = ? and user_id = ? order by id desc;");
             statement.setBoolean(1, bool);
             statement.setInt(2, userid);
             return getNotes(statement);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -145,7 +191,9 @@ public class Database {
 
     public void addNote(Note n) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement(
                     "INSERT into notes VALUES ( ? , ? , ? , ? , ? , ? , ?, ? )" );
             sql.setInt(1, n.getId());
@@ -159,6 +207,12 @@ public class Database {
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -168,7 +222,9 @@ public class Database {
 
     public void updateNote(Note n) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement("update notes set title = ?, body = ?, color = ?, html = ? where id = ? ;" );
             sql.setString(1, n.getTitle());
             sql.setString(2, n.getBody());
@@ -178,6 +234,12 @@ public class Database {
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -191,42 +253,68 @@ public class Database {
 
     private void deleteDbOject(int id, String tbl) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement(
                     "DELETE from " + tbl + " WHERE id = ? ;" );
             sql.setInt(1, id);
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void archiveNote(int id) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement("update notes set archived = 1 where id = ? ;" );
             sql.setInt(1, id);
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void restoreNote(int id) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement(
                     "update notes set archived = 0 where id = ? ;" );
             sql.setInt(1, id);
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public Note getNoteByID(int id) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement(
                     "select * from notes where id=?;" );
             sql.setInt(1, id);
@@ -242,13 +330,21 @@ public class Database {
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null; // if try fails
     }
 
     public User getUserByID(int id) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement(
                     "select * from users where id=?;" );
             sql.setInt(1, id);
@@ -259,12 +355,20 @@ public class Database {
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null; // if try fails
     }
 
     public void setNoteColor(Note n, String color) {
+        Connection conn = null;
         try {
+            conn = makeConnection();
             Class.forName("com.mysql.jdbc.Driver");
             PreparedStatement sql =  conn.prepareStatement(
                     "UPDATE notes SET color = ? WHERE id = ? ;" );
@@ -274,6 +378,12 @@ public class Database {
             // conn.close();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -281,7 +391,6 @@ public class Database {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             sql.executeUpdate();
-//             conn.close();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -289,7 +398,9 @@ public class Database {
 
     public int getMaxID(String dbname) {
         int max = -1;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             Class.forName("com.mysql.jdbc.Driver");
             PreparedStatement sql = conn.prepareStatement("select max(id) from " + dbname + ";");
             ResultSet rs = sql.executeQuery();
@@ -299,6 +410,12 @@ public class Database {
             rs.close();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return max;
     }
@@ -306,7 +423,9 @@ public class Database {
     public void addUser(User u) {
         PreparedStatement sql = null;
         u.hashPassword();
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement(
                     "INSERT into users VALUES ( ? , ? , ? , ? )" );
             sql.setInt(1, u.getId());
@@ -316,13 +435,21 @@ public class Database {
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public List<String> getPasswordHashes() {
         List<String> hashes = new ArrayList<>();
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement("select password from users;");
             ResultSet rs = sql.executeQuery();
             while (rs.next()) {
@@ -330,13 +457,21 @@ public class Database {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return hashes;
     }
 
     public User lookupUserByUsername(String username) {
         PreparedStatement sql = null;
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement("select * from users where username = ?;");
             sql.setString(1, username);
             ResultSet rs = sql.executeQuery();
@@ -345,6 +480,12 @@ public class Database {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -354,7 +495,9 @@ public class Database {
         int id = getMaxID("logins")+1;
         String random = RandomStringUtils.random(20, true, true);
         String hashedusername = u.hashUsername();
+        Connection conn = null;
         try {
+            conn = makeConnection();
             sql = conn.prepareStatement("INSERT into logins VALUES ( ? , ? , ? , ?, ? )" );
             sql.setInt(1, id); // id
             sql.setInt(2, u.getId()); // user_id
@@ -364,13 +507,21 @@ public class Database {
             Database.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return random+hashedusername;
     }
 
     public List<Login> getAllLogins() {
         List<Login> logins = new ArrayList<>();
+        Connection conn = null;
         try {
+            conn = makeConnection();
             PreparedStatement statement = conn.prepareStatement("select * from logins;");
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -384,6 +535,12 @@ public class Database {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return logins;
     }
