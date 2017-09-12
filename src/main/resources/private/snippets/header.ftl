@@ -28,19 +28,19 @@
                 </div>
                 <div>
                     <label for="textarea">Body: *</label>
-                    <textarea id="textarea" name="body" rows="3" required></textarea>
+                    <textarea id="textarea" name="body" rows="6" required></textarea>
                 </div>
                 <hr>
-                <div class="colorButtons inline">
-                    <label class="colorText">Choose color:</label>
-                    <input type="button" value=" " style="background-color: #70d5d8;" onClick="document.getElementById('colorchoice').value='70d5d8'">
-                    <input type="button" value=" " style="background-color: #8dffcd;" onClick="document.getElementById('colorchoice').value='8dffcd'">
-                    <input type="button" value=" " style="background-color: #ebbab9;" onClick="document.getElementById('colorchoice').value='ebbab9'">
-                    <input type="button" value=" " style="background-color: #eda6dd;" onClick="document.getElementById('colorchoice').value='eda6dd'">
-                    <input type="button" value=" " style="background-color: #c09bd8;" onClick="document.getElementById('colorchoice').value='c09bd8'">
-                    <input type="button" value=" " style="background-color: #9f97f4;" onClick="document.getElementById('colorchoice').value='9f97f4'">
-                    <input type="button" value=" " style="background-color: #a4def9;" onClick="document.getElementById('colorchoice').value='a4def9'">
-                </div>
+                <!--<div class="colorButtons inline">-->
+                    <!--<label class="colorText">Choose color:</label>-->
+                    <!--<input type="button" value=" " style="background-color: #70d5d8;" onClick="document.getElementById('colorchoice').value='70d5d8'">-->
+                    <!--<input type="button" value=" " style="background-color: #8dffcd;" onClick="document.getElementById('colorchoice').value='8dffcd'">-->
+                    <!--<input type="button" value=" " style="background-color: #ebbab9;" onClick="document.getElementById('colorchoice').value='ebbab9'">-->
+                    <!--<input type="button" value=" " style="background-color: #eda6dd;" onClick="document.getElementById('colorchoice').value='eda6dd'">-->
+                    <!--<input type="button" value=" " style="background-color: #c09bd8;" onClick="document.getElementById('colorchoice').value='c09bd8'">-->
+                    <!--<input type="button" value=" " style="background-color: #9f97f4;" onClick="document.getElementById('colorchoice').value='9f97f4'">-->
+                    <!--<input type="button" value=" " style="background-color: #a4def9;" onClick="document.getElementById('colorchoice').value='a4def9'">-->
+                <!--</div>-->
                 <div>
                     <label for="colorchoice">Custom hex color:</label>
                     <input class="inline" style="display: inline;" type="text" name="color" id="colorchoice" maxlength="6">
