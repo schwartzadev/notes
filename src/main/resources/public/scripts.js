@@ -7,6 +7,14 @@ function togglePass() {
     }
 }
 
+function loadFab() {
+    $( ".fab-button" ).hover(function() {
+        $(this).css('box-shadow', '0px 6px 15px -3px rgba(0,0,0,0.75)');
+    }, function() {
+        $(this).css('box-shadow', '0px 6px 11px -3px rgba(0,0,0,0.75)');
+    });
+}
+
 function checkRegister() {
     function failedTest(error) {
         message.innerHTML = error;

@@ -8,7 +8,6 @@
     <script src="/scripts.js"></script>
 </head>
 <div class="topnav">
-    <b><a id="popupTrigger"><img src="./img/plus.svg" id="add-note-img"></a></b>
     <a href="index.html">View notes</a>
     <a href="archived.html">View archived notes</a>
     <a href="/logout" style="float:right;">Sign Out (${user.getUsername()})</a>
@@ -51,7 +50,11 @@
         </div>
     </div>
 </div>
+<div class="fab-parent">
+    <button class="fab-button" id="popupTrigger"><img src="./img/plus.svg" class="fab-img"></button>
+</div>
 
 <script>
     modalScripts();
+    loadFab();
 </script>
