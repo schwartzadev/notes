@@ -1,4 +1,12 @@
-<head><link rel="stylesheet" type="text/css" href="/styles.css"></head>
+<head>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous">
+    </script>
+    <script src="/scripts.js"></script>
+</head>
 <form id="note-factory" method="post" action="/update-note">
     <label for="title">Title:</label>
     <#if n.title??>
@@ -13,3 +21,4 @@
     <input type="hidden" name="id" value="${n.getId()}">
     <button class="submit" >Submit</button>
 </form>
+<script>ctrlEnterTextarea();</script>

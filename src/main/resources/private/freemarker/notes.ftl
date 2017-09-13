@@ -1,5 +1,6 @@
 <#include "*/snippets/header.ftl">
 <#include "*/snippets/index.html">
+<div class="container-master">
 <#if pinnedNotes?? && pinnedNotes?size gt 0>
 <h1 class="pagetitle">pinned notes</h1>
 <div class="container">
@@ -67,5 +68,6 @@
             </div>
         </div>
     </#list>
+</div>
 </div>
 <#include "*/snippets/footer.html">
